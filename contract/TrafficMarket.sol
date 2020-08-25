@@ -12,9 +12,9 @@ contract TrafficMarket is owned {
     uint public decimal = 18;
 
     //sys settings
-    uint256 public MBytesPerToken;
-    uint256 public PoolDeposit;
-    uint256 public MinerDeposit;
+    uint256 public MBytesPerToken = 1000;
+    uint256 public PoolDeposit = 200000 * (10 ** decimal);
+    uint256 public MinerDeposit = 2000 * (10 ** decimal);
 
     //storage
     address[] public Pools;
