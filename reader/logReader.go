@@ -6,7 +6,7 @@ import (
 	"github.com/hyperorchidlab/pirate_contract"
 )
 
-func UsersOfPool(userAddr, poolAddr common.Address) ([]common.Address, error) {
+func UsersOfPool(poolAddr common.Address) ([]common.Address, error) {
 	var list []common.Address
 	client, market := pirate_contract.RecoverMarket()
 	if client == nil{
@@ -14,7 +14,7 @@ func UsersOfPool(userAddr, poolAddr common.Address) ([]common.Address, error) {
 	}
 	defer client.Close()
 
-	it, err := market.FilterCharge(nil,[]common.Address{userAddr}, []common.Address{poolAddr})
+	it, err := market.FilterCharge(nil,[]common.Address{}, []common.Address{poolAddr})
 
 	if err != nil {
 		return list, err
