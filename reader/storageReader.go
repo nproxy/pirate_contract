@@ -89,7 +89,7 @@ func UserData(poolAddr, userAddr common.Address) (*big.Int, *big.Int, error){
 func PayerForMiner(poolAddr common.Address, subAddr [32]byte) (common.Address, error) {
 	client, market := pirate_contract.RecoverMarket()
 	if client == nil {
-		return nil, errors.New("query miner address failed")
+		return [20]byte{}, errors.New("query miner address failed")
 	}
 	defer client.Close()
 	result, err := market.PayerForMiner(nil,poolAddr, subAddr)
