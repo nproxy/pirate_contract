@@ -24,8 +24,8 @@ contract TrafficMarket is owned {
     mapping(address=>mapping(bytes32=>address)) public payerForMiner;
 
     event SettingsChanged();
-    event PoolReg();
-    event PoolDestroy();
+    event PoolReg(address poolAddr);
+    event PoolDestroy(address poolAddr);
     event PoolClaim(
         address indexed pool,
         address indexed user,
@@ -94,7 +94,7 @@ contract TrafficMarket is owned {
         Pools.push(msg.sender);
         token.transferFrom(msg.sender, address(this), PoolDeposit);
 
-        emit PoolReg();
+        emit PoolReg(msg.sender);
     }
 
     function destroyPool(uint256 index) public {
@@ -102,7 +102,7 @@ contract TrafficMarket is owned {
         Pools[index] = Pools[Pools.length-1];
         Pools.pop();
         token.transfer(msg.sender, PoolDeposit);
-        emit PoolDestroy();
+        emit PoolDestroy(msg.sender);
     }
 
     function claim(address user, address pool, uint256 credit, uint256 amount, uint256 micNonce, uint256 cn, bytes memory signature) public {
