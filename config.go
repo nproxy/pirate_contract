@@ -1,9 +1,7 @@
 package pirate_contract
 
 import (
-	"github.com/BPassword/bpassword-lib/eth"
 	"github.com/ethereum/go-ethereum/common"
-	"math/big"
 )
 
 type Config struct {
@@ -19,19 +17,4 @@ var CurConfig = &Config{
 	EthApiUrl:	"https://ropsten.infura.io/v3/8533ef82c9744d38801f512fdd004133",
 	Token: common.HexToAddress("0xad44c8493de3fe2b070f33927a315b50da9a0e25"),
 	Market: common.HexToAddress("0x7Df3Fa0dc8abf2787b96857BF8bEa268cAbA1474"),
-}
-
-
-var GasPrice *big.Int
-
-func SuggestedGasPrice() float64 {
-	price := eth.GetGasPrice()
-	return eth.ConvertByDecimal(price)
-}
-
-func SetGasPrice(price float64) {
-	valF := big.NewFloat(price)
-	tn := new(big.Int)
-	valF.Int(tn)
-	eth.GasPrice = tn
 }
