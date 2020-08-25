@@ -24,7 +24,7 @@ func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 	tx, err := market.RegPool(transactor)
 
 	if err != nil {
-		fmt.Println("can't recover market:", err)
+		fmt.Println("can't reg pool:", err)
 		return nil
 	}
 
