@@ -6,12 +6,13 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/hyperorchidlab/pirate_contract"
 	"github.com/hyperorchidlab/pirate_contract/reader"
 	"math/big"
 )
 
 func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := recoverMarket()
+	client, market := pirate_contract.RecoverMarket()
 	if client == nil{
 		return nil
 	}
@@ -31,7 +32,7 @@ func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKe
 }
 
 func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := recoverMarket()
+	client, market := pirate_contract.RecoverMarket()
 	if client == nil{
 		return nil
 	}
@@ -50,7 +51,7 @@ func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.Private
 }
 
 func RetireFromPool(from common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := recoverMarket()
+	client, market := pirate_contract.RecoverMarket()
 	if client == nil{
 		return nil
 	}

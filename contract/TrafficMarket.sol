@@ -19,9 +19,9 @@ contract TrafficMarket is owned {
     //storage
     address[] public Pools;
     //      pool              user
-    mapping(address=>mapping(address=>userData)) UserData;
+    mapping(address=>mapping(address=>userData)) public UserData;
     //      pool          miner
-    mapping(address=>mapping(bytes32=>address)) payerForMiner;
+    mapping(address=>mapping(bytes32=>address)) public payerForMiner;
 
     event SettingsChanged();
     event PoolReg();

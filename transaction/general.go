@@ -44,20 +44,3 @@ func approve(no int64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateK
 func ApproveToMarket(no int64, priKey *ecdsa.PrivateKey) *types.Transaction {
 	return approve(no, pirate_contract.CurConfig.Token, pirate_contract.CurConfig.Market, priKey)
 }
-
-func recoverMarket() (*ethclient.Client, *contract.TrafficMarket){
-	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
-	if err != nil {
-		fmt.Println("can't connect to ethereum")
-		return nil, nil
-	}
-
-	market, err := contract.NewTrafficMarket(pirate_contract.CurConfig.Market, client)
-
-	if err != nil {
-		fmt.Println("can't recover market")
-		return nil, nil
-	}
-
-	return client, market
-}

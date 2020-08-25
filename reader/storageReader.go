@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -46,15 +47,11 @@ func ContractSetting() (*big.Int, *big.Int, *big.Int){
 
 //get account list for pools
 func Pools() []common.Address {
-	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
+	client, market := pirate_contract.RecoverMarket()
+	if client == nil{
+		return nil
+	}
 	defer client.Close()
-	if err!= nil{
-		return nil
-	}
-	market, err := contract.NewTrafficMarket(pirate_contract.CurConfig.Market, client)
-	if err != nil {
-		return nil
-	}
 
 	list, err := market.GetPoolList(nil)
 
@@ -73,4 +70,31 @@ func GetPoolIndex(poolAddr common.Address) int{
 		}
 	}
 	return -1
+}
+
+func UserData(poolAddr, userAddr common.Address) (*big.Int, *big.Int, error){
+	client, market := pirate_contract.RecoverMarket()
+	if client == nil{
+		return nil, nil, errors.New("query user data failed")
+	}
+	defer client.Close()
+	result, err := market.UserData(nil, poolAddr, userAddr)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result.ChargeBalance, result.Epoch, nil
+}
+
+func PayerForMiner(poolAddr common.Address, subAddr [32]byte) (common.Address, error) {
+	client, market := pirate_contract.RecoverMarket()
+	if client == nil {
+		return nil, errors.New("query miner address failed")
+	}
+	defer client.Close()
+	result, err := market.PayerForMiner(nil,poolAddr, subAddr)
+	if err != nil {
+		return [20]byte{}, err
+	}
+	return result, nil
 }

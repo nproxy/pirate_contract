@@ -6,12 +6,13 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/hyperorchidlab/pirate_contract"
 	"github.com/hyperorchidlab/pirate_contract/reader"
 	"math/big"
 )
 
 func Charge(userAddr, poolAddr common.Address, no int64, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := recoverMarket()
+	client, market := pirate_contract.RecoverMarket()
 	if client == nil{
 		return nil
 	}
