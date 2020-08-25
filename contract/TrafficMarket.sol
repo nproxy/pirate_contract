@@ -75,6 +75,10 @@ contract TrafficMarket is owned {
         emit SettingsChanged();
     }
 
+    function getPoolList() external view returns (address[] memory) {
+        return Pools;
+    }
+
     function tokenBalance(address userAddr) public view returns (uint256, uint256, uint256){
         return (token.balanceOf(userAddr), userAddr.balance, token.allowance(userAddr, address(this)));
     }
@@ -93,7 +97,7 @@ contract TrafficMarket is owned {
         emit PoolReg();
     }
 
-    function destoryPool(uint256 index) public {
+    function destroyPool(uint256 index) public {
         require(Pools[index] == msg.sender, "wrong index");
         Pools[index] = Pools[Pools.length-1];
         Pools.pop();

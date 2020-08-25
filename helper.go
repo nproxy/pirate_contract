@@ -1,4 +1,4 @@
-package account_helper
+package pirate_contract
 
 import (
 	"crypto/ecdsa"
@@ -6,6 +6,8 @@ import (
 	"math/big"
 )
 
+
+//this method is very dangerous, please avoid expose your secret key !!!
 func PrivateKeyFromStr(keyStr string) ecdsa.PrivateKey{
 	var pri ecdsa.PrivateKey
 	pri.D, _ = new(big.Int).SetString(keyStr, 16)

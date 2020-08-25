@@ -1,10 +1,12 @@
-package pirate_contract
+package transaction
 
 import (
 	"context"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/hyperorchidlab/pirate_contract"
+	"time"
 )
 
 const (
@@ -15,16 +17,10 @@ const (
 	SYSERROR
 )
 
-func ClientConn() (*ethclient.Client, error) {
-	conn, err := ethclient.Dial(CurConfig.EthApiUrl)
-	if err != nil {
-		return nil, err
-	}
-	return conn, nil
-}
+
 
 func CheckTransactionStatus(hash common.Hash) (int, error) {
-	client, err := ClientConn()
+	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
 	if err != nil {
 		fmt.Println("[CheckTransactionStatus] err:", err.Error())
 		return SYSERROR, err
@@ -33,7 +29,7 @@ func CheckTransactionStatus(hash common.Hash) (int, error) {
 	// not confirmed, not to check pending pool
 	if receipt == nil {
 		//check if transaction is pending
-		isPending, err := TransactionByHash(hash)
+		isPending, err := IsPending(hash)
 		if err == nil {
 			if isPending {
 				return PENDING, nil
@@ -55,8 +51,9 @@ func CheckTransactionStatus(hash common.Hash) (int, error) {
 	}
 }
 
-func TransactionByHash(hash common.Hash) (bool, error) {
-	client, err := ClientConn()
+
+func IsPending(hash common.Hash) (bool, error) {
+	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
 	if err != nil {
 		return false, err
 	}
@@ -65,9 +62,37 @@ func TransactionByHash(hash common.Hash) (bool, error) {
 }
 
 func NextOnce(addr common.Address) (uint64, error) {
-	if client, err := ClientConn(); err != nil {
+	if client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl); err != nil {
 		return 0, err
 	} else {
 		return client.NonceAt(context.Background(), addr, nil)
+	}
+}
+
+func WaitMined(hash common.Hash) error {
+	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
+	if err != nil {
+		fmt.Println("[WaitMined]: ClientConn err:", err.Error())
+		return err
+	}
+	return modifiedWaitMined(context.Background(), client, hash)
+}
+
+func modifiedWaitMined(ctx context.Context, b *ethclient.Client, hash common.Hash) error {
+	queryTicker := time.NewTicker(time.Second)
+	defer queryTicker.Stop()
+
+	for {
+		receipt, _ := b.TransactionReceipt(ctx, hash)
+		//transaction confirmed
+		if receipt != nil {
+			return nil
+		}
+		// Wait for the next round.
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-queryTicker.C:
+		}
 	}
 }
