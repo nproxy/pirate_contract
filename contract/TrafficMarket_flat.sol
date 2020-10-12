@@ -1,8 +1,96 @@
-pragma solidity >=0.5.11;
+pragma solidity >=0.4.24;
 
-import "./owned.sol";
-import "./safemath.sol";
-import "./IERC20.sol";
+interface IERC20 {
+  function totalSupply() external view returns (uint256);
+
+  function balanceOf(address who) external view returns (uint256);
+
+  function allowance(address owner, address spender)
+    external view returns (uint256);
+
+  function transfer(address to, uint256 value) external returns (bool);
+
+  function approve(address spender, uint256 value)
+    external returns (bool);
+
+  function transferFrom(address from, address to, uint256 value)
+    external returns (bool);
+
+  event Transfer(
+    address indexed from,
+    address indexed to,
+    uint256 value
+  );
+
+  event Approval(
+    address indexed owner,
+    address indexed spender,
+    uint256 value
+  );
+}
+
+library SafeMath {
+
+  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+
+    if (a == 0) {
+      return 0;
+    }
+
+    uint256 c = a * b;
+    require(c / a == b);
+
+    return c;
+  }
+
+
+  function div(uint256 a, uint256 b) internal pure returns (uint256) {
+    require(b > 0); // Solidity only automatically asserts when dividing by 0
+    uint256 c = a / b;
+
+    return c;
+  }
+
+  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+    require(b <= a);
+    uint256 c = a - b;
+
+    return c;
+  }
+
+  function add(uint256 a, uint256 b) internal pure returns (uint256) {
+    uint256 c = a + b;
+    require(c >= a);
+
+    return c;
+  }
+
+  function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+    require(b != 0);
+    return a % b;
+  }
+}
+
+contract owned {
+    address public owner;
+
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function transferOwnership(address newOwner) onlyOwner public {
+        owner = newOwner;
+    }
+}
+
+
+
+
 
 contract TrafficMarket is owned {
     using SafeMath for uint256;
@@ -24,9 +112,7 @@ contract TrafficMarket is owned {
     mapping(address=>mapping(bytes32=>address)) public payerForMiner;
 
     event SettingsChanged();
-
-    event PoolReg(address poolAddr, uint8 eventType);  //0 for join, 1 for quit
-
+    event PoolReg(address poolAddr, uint8);
     event PoolClaim(
         address indexed pool,
         address indexed user,
@@ -92,11 +178,10 @@ contract TrafficMarket is owned {
                 revert("already registered");
             }
         }
-        token.transferFrom(msg.sender, address(this), PoolDeposit);
         Pools.push(msg.sender);
+        token.transferFrom(msg.sender, address(this), PoolDeposit);
 
-        emit PoolReg(msg.sender,0);
-
+        emit PoolReg(msg.sender, 0);
     }
 
     function destroyPool(uint256 index) public {
@@ -104,8 +189,7 @@ contract TrafficMarket is owned {
         Pools[index] = Pools[Pools.length-1];
         Pools.pop();
         token.transfer(msg.sender, PoolDeposit);
-        emit PoolReg(msg.sender,1);
-
+        emit PoolReg(msg.sender, 1);
     }
 
     function claim(address user, address pool, uint256 credit, uint256 amount, uint256 micNonce, uint256 cn, bytes memory signature) public {
@@ -159,8 +243,8 @@ contract TrafficMarket is owned {
 
     //miner action
     function joinPool(address poolAddr, uint256 index, bytes32 subAddr) public poolFind(poolAddr, index){
-        require(payerForMiner[poolAddr][subAddr] == address(0), "miner registered");
         token.transferFrom(msg.sender, address(this), MinerDeposit);
+        require(payerForMiner[poolAddr][subAddr] == address(0), "miner registered");
         payerForMiner[poolAddr][subAddr] = msg.sender;
         emit MinerEvent(subAddr, poolAddr, address(0), 0);
     }
@@ -181,3 +265,5 @@ contract TrafficMarket is owned {
     }
 
 }
+
+
