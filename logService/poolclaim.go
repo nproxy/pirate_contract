@@ -278,6 +278,7 @@ func recover1() error  {
 		poolhistory.History = append(poolhistory.History,dbv)
 
 	}
+	return nil
 
 }
 
