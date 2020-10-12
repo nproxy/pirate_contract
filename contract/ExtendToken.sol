@@ -43,6 +43,7 @@ contract ExtendToken is owned{
 
         delete AllTokenList[t.index];
         delete AllTokenData[tokenAddr];
+        delete AllPayContractList[t.index];
     }
 
 

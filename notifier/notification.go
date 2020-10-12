@@ -23,6 +23,8 @@ func notify(claimChan chan *contract.TrafficMarketPoolClaim) error{
 	go func() {
 		for {
 			select {
+			case cc:=<-claimChan:
+				fmt.Println(cc.User.String())
 			case err := <-sub.Err():
 				fmt.Println("notify error", err)
 				sub.Unsubscribe()
