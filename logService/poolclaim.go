@@ -117,7 +117,9 @@ func addNewPoolClaimnHistory(pool,user common.Address, l types.Log,traffic,token
 
 	k:=getPoolClaimKey(pool,user,&h.BlockPos)
 	dbv,_:=json.Marshal(*h)
-	GetLogConf().db.Put([]byte(k),dbv,nil)
+
+	GetLogConf().Save([]byte(k),dbv)
+	//GetLogConf().db.Put([]byte(k),dbv,nil)
 
 	PoolClaimNotify(pool,user,h)
 
@@ -187,14 +189,60 @@ func watchPoolClaim(batch *chan *LogServiceItem) error {
 func curBlockN(n uint64)  {
 	logPoolClaimSrvItem.evPos.SetCurrent(n)
 }
+//
+//func recover() error {
+//	iter:=GetLogConf().db.NewIterator(&util.Range{Start: []byte(poolClaimKeyHead)},nil)
+//
+//	for iter.Next(){
+//		pool,user,err:=poolClaimKey2Address(iter.Key())
+//		if err!=nil{
+//			fmt.Println("key",string(iter.Key()),err)
+//		}
+//		v, ok:=poolClaimUser[pool]
+//		if !ok{
+//			poolClaimUser[pool] = make(map[common.Address]*PoolClaimData)
+//			v = poolClaimUser[pool]
+//		}
+//
+//		_, ok = v[user]
+//		if !ok{
+//			v[user] = &PoolClaimData{PoolAddr: pool,UserAddr: user}
+//		}
+//
+//		dbv:=&PoolClaimHistory{}
+//		json.Unmarshal(iter.Value(),dbv)
+//
+//		found:=false
+//
+//		for _,history := range v[user].History{
+//			if history.BlockNumber == dbv.BlockNumber && history.TxIndex == dbv.TxIndex{
+//				found = true
+//				break
+//			}
+//		}
+//
+//		if found{
+//			continue
+//		}
+//
+//		poolhistory := v[user]
+//
+//		eventPos.LastMax2(dbv.BlockNumber,dbv.TxIndex)
+//
+//		poolhistory.History = append(poolhistory.History,dbv)
+//	}
+//
+//	return nil
+//}
 
-func recover() error {
-	iter:=GetLogConf().db.NewIterator(&util.Range{Start: []byte(poolClaimKeyHead)},nil)
+func recover1() error  {
+	allcm:=GetLogConf().BatchGet([]byte(poolClaimKeyHead),nil)
 
-	for iter.Next(){
-		pool,user,err:=poolClaimKey2Address(iter.Key())
+	for i:=0;i<len(allcm);i++{
+		cm:=allcm[i]
+		pool,user,err:=poolClaimKey2Address(cm.key)
 		if err!=nil{
-			fmt.Println("key",string(iter.Key()),err)
+			fmt.Println("key",string(cm.key),err)
 		}
 		v, ok:=poolClaimUser[pool]
 		if !ok{
@@ -208,7 +256,7 @@ func recover() error {
 		}
 
 		dbv:=&PoolClaimHistory{}
-		json.Unmarshal(iter.Value(),dbv)
+		json.Unmarshal(cm.vaule,dbv)
 
 		found:=false
 
@@ -228,9 +276,9 @@ func recover() error {
 		eventPos.LastMax2(dbv.BlockNumber,dbv.TxIndex)
 
 		poolhistory.History = append(poolhistory.History,dbv)
+
 	}
 
-	return nil
 }
 
 
@@ -240,7 +288,7 @@ func init()  {
 	logPoolClaimSrvItem.stop = make(chan struct{})
 	logPoolClaimSrvItem.watch = watchPoolClaim
 	logPoolClaimSrvItem.batch = BatchPoolClaim
-	logPoolClaimSrvItem.recover = recover
+	logPoolClaimSrvItem.recover = recover1
 	logPoolClaimSrvItem.CurBlockNum = curBlockN
 
 	GetLogService().RegLogSrv(logPoolClaimSrvItem)
