@@ -8,22 +8,22 @@ import (
 )
 
 //this is an example of notification
-func notify(claimChan chan *contract.TrafficMarketPoolClaim) error{
+func notify(claimChan chan *contract.TrafficMarketPoolClaim) error {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 
 	}
 
-	sub, err:= market.WatchPoolClaim(nil, claimChan, []common.Address{}, []common.Address{})
+	sub, err := market.WatchPoolClaim(nil, claimChan, []common.Address{}, []common.Address{})
 
-	if err!= nil {
+	if err != nil {
 		return err
 	}
 
 	go func() {
 		for {
 			select {
-			case cc:=<-claimChan:
+			case cc := <-claimChan:
 				fmt.Println(cc.User.String())
 			case err := <-sub.Err():
 				fmt.Println("notify error", err)

@@ -6,20 +6,22 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract"
+	"github.com/hyperorchidlab/pirate_contract/config"
 	"github.com/hyperorchidlab/pirate_contract/contract"
 	"math/big"
 	"sync"
 )
 
 //@return MBytesPerToken, PoolDeposit, MinerDeposit
-func ContractSetting() (*big.Int, *big.Int, *big.Int){
-	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
-	defer client.Close()
-	if err!= nil {
+func ContractSetting() (*big.Int, *big.Int, *big.Int) {
+	client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl)
+	if err != nil {
 		fmt.Println("can't connect to ethereum")
-		return nil,nil,nil
+		return nil, nil, nil
 	}
-	market, err := contract.NewTrafficMarket(pirate_contract.CurConfig.Market, client)
+	defer client.Close()
+
+	market, err := contract.NewTrafficMarket(config.SysEthConfig.Market, client)
 	if err != nil {
 		fmt.Println("can't recover market")
 		return nil, nil, nil
@@ -48,7 +50,7 @@ func ContractSetting() (*big.Int, *big.Int, *big.Int){
 //get account list for pools
 func Pools() []common.Address {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
@@ -62,9 +64,9 @@ func Pools() []common.Address {
 	return list
 }
 
-func GetPoolIndex(poolAddr common.Address) int{
+func GetPoolIndex(poolAddr common.Address) int {
 	list := Pools()
-	for i:=0;i<len(list);i++{
+	for i := 0; i < len(list); i++ {
 		if list[i] == poolAddr {
 			return i
 		}
@@ -72,9 +74,9 @@ func GetPoolIndex(poolAddr common.Address) int{
 	return -1
 }
 
-func UserData(poolAddr, userAddr common.Address) (*big.Int, *big.Int, error){
+func UserData(poolAddr, userAddr common.Address) (*big.Int, *big.Int, error) {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil, nil, errors.New("query user data failed")
 	}
 	defer client.Close()
@@ -92,7 +94,7 @@ func PayerForMiner(poolAddr common.Address, subAddr [32]byte) (common.Address, e
 		return [20]byte{}, errors.New("query miner address failed")
 	}
 	defer client.Close()
-	result, err := market.PayerForMiner(nil,poolAddr, subAddr)
+	result, err := market.PayerForMiner(nil, poolAddr, subAddr)
 	if err != nil {
 		return [20]byte{}, err
 	}

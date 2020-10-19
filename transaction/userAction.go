@@ -13,7 +13,7 @@ import (
 
 func Charge(userAddr, poolAddr common.Address, no int64, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
@@ -29,7 +29,7 @@ func Charge(userAddr, poolAddr common.Address, no int64, priKey *ecdsa.PrivateKe
 	t := big.NewInt(no)
 	tokenNo := t.Mul(t, big.NewInt(1e18))
 
-	tx, err := market.Charge(transactor,userAddr, tokenNo,poolAddr, big.NewInt(int64(index)))
+	tx, err := market.Charge(transactor, userAddr, tokenNo, poolAddr, big.NewInt(int64(index)))
 
 	if err != nil {
 		fmt.Println("can't charge", err)

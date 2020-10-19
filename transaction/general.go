@@ -12,12 +12,11 @@ import (
 	"math/big"
 )
 
-
 func approve(no int64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
 	defer client.Close()
 
-	if err!= nil {
+	if err != nil {
 		fmt.Println("can't connect to ethereum")
 		return nil
 	}

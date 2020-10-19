@@ -17,8 +17,6 @@ const (
 	SYSERROR
 )
 
-
-
 func CheckTransactionStatus(hash common.Hash) (int, error) {
 	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
 	if err != nil {
@@ -50,7 +48,6 @@ func CheckTransactionStatus(hash common.Hash) (int, error) {
 		}
 	}
 }
-
 
 func IsPending(hash common.Hash) (bool, error) {
 	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)

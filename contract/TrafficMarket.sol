@@ -42,6 +42,7 @@ contract TrafficMarket is owned {
         bytes32 indexed subAddr,
         address indexed addr1,
         address addr2,
+        address payAddr,
         uint8 eventType);  // 0 for join, 1 for change, 2 for retire
 
     struct userData {
@@ -82,6 +83,10 @@ contract TrafficMarket is owned {
 
     function tokenBalance(address userAddr) public view returns (uint256, uint256, uint256){
         return (token.balanceOf(userAddr), userAddr.balance, token.allowance(userAddr, address(this)));
+    }
+
+    function blockChainSettings() public view returns (uint256, uint256, uint256){
+        return (MBytesPerToken, PoolDeposit, MinerDeposit);
     }
 
 
@@ -162,7 +167,7 @@ contract TrafficMarket is owned {
         require(payerForMiner[poolAddr][subAddr] == address(0), "miner registered");
         token.transferFrom(msg.sender, address(this), MinerDeposit);
         payerForMiner[poolAddr][subAddr] = msg.sender;
-        emit MinerEvent(subAddr, poolAddr, address(0), 0);
+        emit MinerEvent(subAddr, poolAddr, address(0),msg.sender, 0);
     }
 
     function changePool(address from, address to, bytes32 subAddr) public {
@@ -170,14 +175,14 @@ contract TrafficMarket is owned {
         require(payerForMiner[from][subAddr] == msg.sender, "not allowed");
         delete payerForMiner[from][subAddr];
         payerForMiner[to][subAddr] = msg.sender;
-        emit MinerEvent(subAddr, from, to, 1);
+        emit MinerEvent(subAddr, from, to,msg.sender, 1);
     }
 
     function retireFromPool(address from, bytes32 subAddr) public {
         require(payerForMiner[from][subAddr] ==  msg.sender, "not allowed");
         delete payerForMiner[from][subAddr];
         token.transfer(msg.sender, MinerDeposit);
-        emit MinerEvent(subAddr, from, address(0), 2);
+        emit MinerEvent(subAddr, from, address(0),msg.sender, 2);
     }
 
 }

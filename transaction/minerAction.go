@@ -13,7 +13,7 @@ import (
 
 func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
@@ -33,7 +33,7 @@ func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKe
 
 func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
@@ -43,7 +43,7 @@ func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.Private
 	tx, err := market.ChangePool(transactor, from, to, subAddr)
 
 	if err != nil {
-		fmt.Println("can't change pool",err)
+		fmt.Println("can't change pool", err)
 		return nil
 	}
 
@@ -52,7 +52,7 @@ func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.Private
 
 func RetireFromPool(from common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()

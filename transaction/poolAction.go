@@ -14,7 +14,7 @@ import (
 func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
@@ -31,10 +31,9 @@ func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 	return tx
 }
 
-
 func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
@@ -47,7 +46,6 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 		fmt.Println("can't find given pool address")
 	}
 
-
 	tx, err := market.DestroyPool(transactor, big.NewInt(int64(index)))
 
 	if err != nil {
@@ -59,7 +57,7 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 
 func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	client, market := pirate_contract.RecoverMarket()
-	if client == nil{
+	if client == nil {
 		return nil
 	}
 	defer client.Close()
