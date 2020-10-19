@@ -50,11 +50,6 @@ contract TrafficMarket is owned {
         uint256 epoch;
     }
 
-    struct minerData {
-        address payerAddr;
-        bytes32 subAddr;
-    }
-
     modifier poolFind(address poolAddr, uint256 index){
         require(Pools[index] == poolAddr);
         _;
