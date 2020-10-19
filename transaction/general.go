@@ -7,13 +7,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/hyperorchidlab/pirate_contract"
+	"github.com/hyperorchidlab/pirate_contract/config"
 	"github.com/hyperorchidlab/pirate_contract/contract"
 	"math/big"
 )
 
 func approve(no int64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, err := ethclient.Dial(pirate_contract.CurConfig.EthApiUrl)
+	client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl)
 	defer client.Close()
 
 	if err != nil {
@@ -41,5 +41,5 @@ func approve(no int64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateK
 }
 
 func ApproveToMarket(no int64, priKey *ecdsa.PrivateKey) *types.Transaction {
-	return approve(no, pirate_contract.CurConfig.Token, pirate_contract.CurConfig.Market, priKey)
+	return approve(no, config.SysEthConfig.Token, config.SysEthConfig.Market, priKey)
 }

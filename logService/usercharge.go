@@ -125,7 +125,6 @@ func batchUserCharge() error {
 	for iter.Next() {
 		ev := iter.Event
 		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount)
-
 		userChargeEvent.LastMax(ev.Raw)
 	}
 

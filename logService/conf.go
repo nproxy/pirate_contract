@@ -8,7 +8,6 @@ import (
 	"github.com/btcsuite/goleveldb/leveldb/util"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/hyperorchidlab/pirate_contract"
 	"github.com/hyperorchidlab/pirate_contract/config"
 	"github.com/hyperorchidlab/pirate_contract/contract"
 )
@@ -159,7 +158,7 @@ func GetLogConf() *LogConf {
 	return logConf
 }
 
-func Configure(db *leveldb.DB, cfg *pirate_contract.Config) error {
+func Configure(db *leveldb.DB, cfg *config.EthConfig) error {
 	if db == nil || cfg == nil {
 		return errors.New("need db and contract cfg")
 	}

@@ -1,9 +1,17 @@
 package storageService
 
 import (
+	"errors"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/hyperorchidlab/pirate_contract/cabinet"
 	"github.com/hyperorchidlab/pirate_contract/config"
+	"sync"
+)
+
+
+var (
+	poolsLock sync.Mutex
+	pools []common.Address
 )
 
 func GetPirateEthSettings() (*cabinet.PirateEthSetting, error) {
@@ -33,6 +41,41 @@ func GetPoolsList() ([]common.Address, error) {
 
 	return mc.GetPoolList(nil)
 }
+
+func findIndex(pool common.Address) (int,error) {
+	for i:=0;i<len(pools);i++{
+		if pool == pools[i]{
+			return i,nil
+		}
+	}
+
+	return 0,errors.New("not found")
+}
+
+func GetPoolIndex(pool common.Address) (int,error)  {
+	poolsLock.Lock()
+	defer poolsLock.Unlock()
+
+	var (
+		idx int
+		err error
+		poolstmp []common.Address
+	)
+
+	idx,err = findIndex(pool)
+	if err==nil{
+		return idx,nil
+	}
+
+	poolstmp,err = GetPoolsList()
+	if err!=nil{
+		return 0, err
+	}
+	pools = poolstmp
+
+	return findIndex(pool)
+}
+
 
 func GetUserData(pool common.Address, user common.Address) (*cabinet.PirateEthUserData, error) {
 	mc, err := config.SysEthConfig.NewClient()

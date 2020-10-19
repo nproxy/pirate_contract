@@ -6,23 +6,27 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/hyperorchidlab/pirate_contract"
-	"github.com/hyperorchidlab/pirate_contract/reader"
+	"github.com/hyperorchidlab/pirate_contract/config"
+	"github.com/hyperorchidlab/pirate_contract/storageService"
 	"math/big"
 )
 
 func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := pirate_contract.RecoverMarket()
-	if client == nil {
+	mc,err:=config.SysEthConfig.NewClient()
+	if err!=nil{
 		return nil
 	}
-	defer client.Close()
+	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
+	var index int
+	index,err = storageService.GetPoolIndex(poolAddr)
+	if err!=nil{
+		fmt.Println("no pool in contract")
+		return nil
+	}
 
-	index := reader.GetPoolIndex(poolAddr)
-
-	tx, err := market.JoinPool(transactor, poolAddr, big.NewInt(int64(index)), subAddr)
+	tx, err := mc.JoinPool(transactor, poolAddr, big.NewInt(int64(index)), subAddr)
 
 	if err != nil {
 		fmt.Println("can't join pool,", err)
@@ -32,15 +36,15 @@ func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKe
 }
 
 func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := pirate_contract.RecoverMarket()
-	if client == nil {
+	mc,err:=config.SysEthConfig.NewClient()
+	if err!=nil{
 		return nil
 	}
-	defer client.Close()
+	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := market.ChangePool(transactor, from, to, subAddr)
+	tx, err := mc.ChangePool(transactor, from, to, subAddr)
 
 	if err != nil {
 		fmt.Println("can't change pool", err)
@@ -51,15 +55,15 @@ func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.Private
 }
 
 func RetireFromPool(from common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := pirate_contract.RecoverMarket()
-	if client == nil {
+	mc,err:=config.SysEthConfig.NewClient()
+	if err!=nil{
 		return nil
 	}
-	defer client.Close()
+	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := market.RetireFromPool(transactor, from, subAddr)
+	tx, err := mc.RetireFromPool(transactor, from, subAddr)
 
 	if err != nil {
 		fmt.Println("can't retire", err)

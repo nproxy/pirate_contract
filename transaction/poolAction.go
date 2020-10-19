@@ -7,21 +7,23 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/hyperorchidlab/pirate_contract"
+	"github.com/hyperorchidlab/pirate_contract/config"
 	"github.com/hyperorchidlab/pirate_contract/reader"
+	"github.com/hyperorchidlab/pirate_contract/storageService"
 	"math/big"
 )
 
 func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 
-	client, market := pirate_contract.RecoverMarket()
-	if client == nil {
+	mc,err:=config.SysEthConfig.NewClient()
+	if err!=nil{
 		return nil
 	}
-	defer client.Close()
+	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := market.RegPool(transactor)
+	tx, err := mc.RegPool(transactor)
 
 	if err != nil {
 		fmt.Println("can't reg pool:", err)
@@ -32,21 +34,23 @@ func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 }
 
 func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := pirate_contract.RecoverMarket()
-	if client == nil {
+	mc,err:=config.SysEthConfig.NewClient()
+	if err!=nil{
 		return nil
 	}
-	defer client.Close()
+	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	index := reader.GetPoolIndex(poolAddr)
-
-	if index == -1 {
-		fmt.Println("can't find given pool address")
+	var index int
+	index,err = storageService.GetPoolIndex(poolAddr)
+	if err!=nil{
+		fmt.Println("no pool in contract")
+		return nil
 	}
 
-	tx, err := market.DestroyPool(transactor, big.NewInt(int64(index)))
+
+	tx, err := mc.DestroyPool(transactor, big.NewInt(int64(index)))
 
 	if err != nil {
 		fmt.Println("can't destroy pool:", err)
@@ -56,15 +60,15 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 }
 
 func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, market := pirate_contract.RecoverMarket()
-	if client == nil {
+	mc,err:=config.SysEthConfig.NewClient()
+	if err!=nil{
 		return nil
 	}
-	defer client.Close()
+	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := market.Claim(transactor, userAddr, poolAddr, credit, amount, micNonce, cn, sig)
+	tx, err := mc.Claim(transactor, userAddr, poolAddr, credit, amount, micNonce, cn, sig)
 
 	if err != nil {
 		fmt.Println("can't claim", err)
