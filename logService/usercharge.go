@@ -103,7 +103,10 @@ func batchUserCharge() error {
 		return nil
 	}
 
-	mc := GetLogConf().NewMarketClient()
+	mc,err := GetLogConf().NewMarketClient()
+	if err!=nil{
+		return err
+	}
 	defer mc.Close()
 
 	var opt *bind.FilterOpts
@@ -116,10 +119,10 @@ func batchUserCharge() error {
 		}
 	}
 
-	iter, err := mc.Market.FilterCharge(opt, nil, nil)
-	if err != nil {
+	iter, e := mc.FilterCharge(opt, nil, nil)
+	if e != nil {
 		fmt.Print("batch user charge failed")
-		return err
+		return e
 	}
 
 	for iter.Next() {
@@ -134,13 +137,16 @@ func batchUserCharge() error {
 }
 
 func watchUserCharge(batch *chan *LogServiceItem) error {
-	ec := GetLogConf().NewMarketClient()
-	defer ec.Close()
+	mc,err := GetLogConf().NewMarketClient()
+	if err!=nil{
+		return err
+	}
+	defer mc.Close()
 
 	c := make(chan *contract.TrafficMarketCharge, 1024)
 
-	sub, err := ec.Market.WatchCharge(nil, c, nil, nil)
-	if err != nil {
+	sub, e := mc.WatchCharge(nil, c, nil, nil)
+	if e != nil {
 		return err
 	}
 	for {

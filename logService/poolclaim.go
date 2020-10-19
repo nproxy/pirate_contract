@@ -130,7 +130,10 @@ func batchPoolClaim() error {
 		return nil
 	}
 
-	mc := GetLogConf().NewMarketClient()
+	mc,err := GetLogConf().NewMarketClient()
+	if err!=nil{
+		return err
+	}
 	defer mc.Close()
 
 	var opt *bind.FilterOpts
@@ -143,10 +146,10 @@ func batchPoolClaim() error {
 		}
 	}
 
-	iter, err := mc.Market.FilterPoolClaim(opt, nil, nil)
-	if err != nil {
+	iter, e := mc.FilterPoolClaim(opt, nil, nil)
+	if e != nil {
 		fmt.Print("batch Pool Claim failed")
-		return err
+		return e
 	}
 
 	for iter.Next() {
@@ -162,14 +165,17 @@ func batchPoolClaim() error {
 var logPoolClaimSrvItem *LogServiceItem
 
 func watchPoolClaim(batch *chan *LogServiceItem) error {
-	ec := GetLogConf().NewMarketClient()
-	defer ec.Close()
+	mc,err := GetLogConf().NewMarketClient()
+	if err!=nil{
+		return err
+	}
+	defer mc.Close()
 
 	c := make(chan *contract.TrafficMarketPoolClaim, 1024)
 
-	sub, err := ec.Market.WatchPoolClaim(nil, c, nil, nil)
-	if err != nil {
-		return err
+	sub, e := mc.WatchPoolClaim(nil, c, nil, nil)
+	if e != nil {
+		return e
 	}
 
 	for {
@@ -189,51 +195,6 @@ func curPoolClaimBlockN(n uint64) {
 	logPoolClaimSrvItem.evPos.SetCurrent(n)
 }
 
-//
-//func recover() error {
-//	iter:=GetLogConf().db.NewIterator(&util.Range{Start: []byte(poolClaimKeyHead)},nil)
-//
-//	for iter.Next(){
-//		pool,user,err:=poolClaimKey2Address(iter.Key())
-//		if err!=nil{
-//			fmt.Println("key",string(iter.Key()),err)
-//		}
-//		v, ok:=poolClaimUser[pool]
-//		if !ok{
-//			poolClaimUser[pool] = make(map[common.Address]*PoolClaimData)
-//			v = poolClaimUser[pool]
-//		}
-//
-//		_, ok = v[user]
-//		if !ok{
-//			v[user] = &PoolClaimData{PoolAddr: pool,UserAddr: user}
-//		}
-//
-//		dbv:=&PoolClaimHistory{}
-//		json.Unmarshal(iter.Value(),dbv)
-//
-//		found:=false
-//
-//		for _,history := range v[user].History{
-//			if history.BlockNumber == dbv.BlockNumber && history.TxIndex == dbv.TxIndex{
-//				found = true
-//				break
-//			}
-//		}
-//
-//		if found{
-//			continue
-//		}
-//
-//		poolhistory := v[user]
-//
-//		eventPos.LastMax2(dbv.BlockNumber,dbv.TxIndex)
-//
-//		poolhistory.History = append(poolhistory.History,dbv)
-//	}
-//
-//	return nil
-//}
 
 func recoverPoolClaim() error {
 	allcm := GetLogConf().BatchGet([]byte(poolClaimKeyHead), nil)

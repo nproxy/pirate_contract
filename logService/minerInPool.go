@@ -194,7 +194,10 @@ func batchMinerInPool() error  {
 		return nil
 	}
 
-	mc:=GetLogConf().NewMarketClient()
+	mc,err:=GetLogConf().NewMarketClient()
+	if err!=nil{
+		return err
+	}
 	defer mc.Close()
 
 	var opt *bind.FilterOpts
@@ -207,7 +210,7 @@ func batchMinerInPool() error  {
 		}
 	}
 
-	iter, err:=mc.Market.FilterMinerEvent(opt,nil,nil)
+	iter, err:=mc.FilterMinerEvent(opt,nil,nil)
 	if err!=nil{
 		fmt.Print("batch miner action failed")
 		return err
@@ -227,14 +230,17 @@ func batchMinerInPool() error  {
 var logMinerActSrvItem *LogServiceItem
 
 func watchMinerInPool(batch *chan *LogServiceItem) error  {
-	mc:=GetLogConf().NewMarketClient()
+	mc,err:=GetLogConf().NewMarketClient()
+	if err!=nil{
+		return err
+	}
 	defer mc.Close()
 
 	c:=make(chan *contract.TrafficMarketMinerEvent,1024)
 
-	sub, err:=mc.Market.WatchMinerEvent(nil,c,nil,nil)
-	if err!= nil{
-		return err
+	sub, e:=mc.WatchMinerEvent(nil,c,nil,nil)
+	if e!= nil{
+		return e
 	}
 
 	for{

@@ -160,7 +160,10 @@ func (ls *LogService) Start() {
 
 	go func() {
 		defer ls.tc.Stop()
-		mc := GetLogConf().NewMarketClient()
+		mc,err := GetLogConf().NewMarketClient()
+		if err!=nil{
+			panic(err)
+		}
 		defer func() {
 			mc.Close()
 		}()
@@ -169,10 +172,13 @@ func (ls *LogService) Start() {
 			case <-ls.stop:
 				return
 			case <-ls.tc.C:
-				n, err := mc.EthClient.BlockNumber(context.TODO())
+				n, err := mc.GetClient().BlockNumber(context.TODO())
 				if err != nil {
 					mc.Close()
-					mc = GetLogConf().NewMarketClient()
+					mc,err = GetLogConf().NewMarketClient()
+					if err!= nil{
+						panic("can't create eth client")
+					}
 				}
 				for _, v := range ls.logService {
 					if v.CurBlockNum != nil {

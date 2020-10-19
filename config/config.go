@@ -27,6 +27,10 @@ type MarketClient struct {
 	*contract.TrafficMarket
 }
 
+func (mc *MarketClient) GetClient() *ethclient.Client{
+	return mc.client
+}
+
 func (mc *MarketClient) Close() {
 	if mc.client == nil {
 		return

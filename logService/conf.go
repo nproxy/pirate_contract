@@ -2,14 +2,11 @@ package logService
 
 import (
 	"errors"
-	"fmt"
 	"github.com/btcsuite/goleveldb/leveldb"
 	"github.com/btcsuite/goleveldb/leveldb/opt"
 	"github.com/btcsuite/goleveldb/leveldb/util"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract/config"
-	"github.com/hyperorchidlab/pirate_contract/contract"
 )
 
 type LogConf struct {
@@ -125,34 +122,14 @@ func (ep *EventPos) StartPos() uint64 {
 	}
 }
 
-type MarketClient struct {
-	EthClient *ethclient.Client
-	Market    *contract.TrafficMarket
+
+func (lc *LogConf) NewMarketClient() (*config.MarketClient,error) {
+	if lc.cfg == nil{
+		panic("no config")
+	}
+	return lc.cfg.NewClient()
 }
 
-func (lc *LogConf) NewMarketClient() *MarketClient {
-	client, err := ethclient.Dial(lc.cfg.EthApiUrl)
-	if err != nil {
-		fmt.Println("dail to:", lc.cfg.EthApiUrl, "failed")
-		return nil
-	}
-
-	market, err := contract.NewTrafficMarket(lc.cfg.Market, client)
-	if err != nil {
-		fmt.Println("create traffic market failed")
-		client.Close()
-		return nil
-	}
-
-	return &MarketClient{EthClient: client, Market: market}
-}
-
-func (mc *MarketClient) Close() {
-	if mc.EthClient != nil {
-		mc.EthClient.Close()
-		mc.EthClient = nil
-	}
-}
 
 func GetLogConf() *LogConf {
 	return logConf
