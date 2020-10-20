@@ -160,8 +160,8 @@ func (ls *LogService) Start() {
 
 	go func() {
 		defer ls.tc.Stop()
-		mc,err := GetLogConf().NewMarketClient()
-		if err!=nil{
+		mc, err := GetLogConf().NewMarketClient()
+		if err != nil {
 			panic(err)
 		}
 		defer func() {
@@ -175,8 +175,8 @@ func (ls *LogService) Start() {
 				n, err := mc.GetClient().BlockNumber(context.TODO())
 				if err != nil {
 					mc.Close()
-					mc,err = GetLogConf().NewMarketClient()
-					if err!= nil{
+					mc, err = GetLogConf().NewMarketClient()
+					if err != nil {
 						panic("can't create eth client")
 					}
 				}

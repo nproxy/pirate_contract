@@ -27,19 +27,19 @@ var userChargeEvent EventPos
 
 var usersInPool map[common.Address]map[common.Address]*UserCharge
 
-func GetUserList(pool common.Address) ([]common.Address,error)  {
-	v,ok:=usersInPool[pool]
-	if !ok{
-		return nil,errors.New("no pool in mem")
+func GetUserList(pool common.Address) ([]common.Address, error) {
+	v, ok := usersInPool[pool]
+	if !ok {
+		return nil, errors.New("no pool in mem")
 	}
 
 	var uas []common.Address
 
-	for k,_:=range v{
-		uas = append(uas,k)
+	for k, _ := range v {
+		uas = append(uas, k)
 	}
 
-	return uas,nil
+	return uas, nil
 }
 
 var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int) error
@@ -92,7 +92,7 @@ func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount
 
 	GetLogConf().Save([]byte(key), dbv)
 
-	if UserChargeNotify != nil{
+	if UserChargeNotify != nil {
 		UserChargeNotify(user, pool, tokenAmount)
 	}
 
@@ -103,8 +103,8 @@ func batchUserCharge() error {
 		return nil
 	}
 
-	mc,err := GetLogConf().NewMarketClient()
-	if err!=nil{
+	mc, err := GetLogConf().NewMarketClient()
+	if err != nil {
 		return err
 	}
 	defer mc.Close()
@@ -137,8 +137,8 @@ func batchUserCharge() error {
 }
 
 func watchUserCharge(batch *chan *LogServiceItem) error {
-	mc,err := GetLogConf().NewMarketClient()
-	if err!=nil{
+	mc, err := GetLogConf().NewMarketClient()
+	if err != nil {
 		return err
 	}
 	defer mc.Close()

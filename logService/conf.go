@@ -122,14 +122,12 @@ func (ep *EventPos) StartPos() uint64 {
 	}
 }
 
-
-func (lc *LogConf) NewMarketClient() (*config.MarketClient,error) {
-	if lc.cfg == nil{
+func (lc *LogConf) NewMarketClient() (*config.MarketClient, error) {
+	if lc.cfg == nil {
 		panic("no config")
 	}
 	return lc.cfg.NewClient()
 }
-
 
 func GetLogConf() *LogConf {
 	return logConf

@@ -15,8 +15,8 @@ import (
 
 func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 
-	mc,err:=config.SysEthConfig.NewClient()
-	if err!=nil{
+	mc, err := config.SysEthConfig.NewClient()
+	if err != nil {
 		return nil
 	}
 	defer mc.Close()
@@ -34,8 +34,8 @@ func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 }
 
 func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
-	mc,err:=config.SysEthConfig.NewClient()
-	if err!=nil{
+	mc, err := config.SysEthConfig.NewClient()
+	if err != nil {
 		return nil
 	}
 	defer mc.Close()
@@ -43,12 +43,11 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 	transactor := bind.NewKeyedTransactor(priKey)
 
 	var index int
-	index,err = storageService.GetPoolIndex(poolAddr)
-	if err!=nil{
+	index, err = storageService.GetPoolIndex(poolAddr)
+	if err != nil {
 		fmt.Println("no pool in contract")
 		return nil
 	}
-
 
 	tx, err := mc.DestroyPool(transactor, big.NewInt(int64(index)))
 
@@ -60,8 +59,8 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 }
 
 func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	mc,err:=config.SysEthConfig.NewClient()
-	if err!=nil{
+	mc, err := config.SysEthConfig.NewClient()
+	if err != nil {
 		return nil
 	}
 	defer mc.Close()

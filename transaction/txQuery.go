@@ -16,6 +16,7 @@ const (
 	NOTFOUND
 	SYSERROR
 )
+
 //todo use transaction by hash
 func CheckTransactionStatus(hash common.Hash) (int, error) {
 	client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl)

@@ -20,10 +20,10 @@ type PoolClaimData struct {
 }
 
 type PoolClaimHistory struct {
-	Traffic    *big.Int		`json:"traffic"`
-	Token      *big.Int		`json:"token"`
-	MicroNonce *big.Int		`json:"micro_nonce"`
-	ClaimNonce *big.Int		`json:"claim_nonce"`
+	Traffic    *big.Int `json:"traffic"`
+	Token      *big.Int `json:"token"`
+	MicroNonce *big.Int `json:"micro_nonce"`
+	ClaimNonce *big.Int `json:"claim_nonce"`
 	BlockPos
 }
 
@@ -117,10 +117,9 @@ func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, to
 
 	GetLogConf().Save([]byte(k), dbv)
 	//GetLogConf().db.Put([]byte(k),dbv,nil)
-	if PoolClaimNotify != nil{
+	if PoolClaimNotify != nil {
 		PoolClaimNotify(pool, user, h)
 	}
-
 
 }
 
@@ -130,8 +129,8 @@ func batchPoolClaim() error {
 		return nil
 	}
 
-	mc,err := GetLogConf().NewMarketClient()
-	if err!=nil{
+	mc, err := GetLogConf().NewMarketClient()
+	if err != nil {
 		return err
 	}
 	defer mc.Close()
@@ -165,8 +164,8 @@ func batchPoolClaim() error {
 var logPoolClaimSrvItem *LogServiceItem
 
 func watchPoolClaim(batch *chan *LogServiceItem) error {
-	mc,err := GetLogConf().NewMarketClient()
-	if err!=nil{
+	mc, err := GetLogConf().NewMarketClient()
+	if err != nil {
 		return err
 	}
 	defer mc.Close()
@@ -194,7 +193,6 @@ func watchPoolClaim(batch *chan *LogServiceItem) error {
 func curPoolClaimBlockN(n uint64) {
 	logPoolClaimSrvItem.evPos.SetCurrent(n)
 }
-
 
 func recoverPoolClaim() error {
 	allcm := GetLogConf().BatchGet([]byte(poolClaimKeyHead), nil)

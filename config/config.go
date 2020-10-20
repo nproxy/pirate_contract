@@ -27,7 +27,7 @@ type MarketClient struct {
 	*contract.TrafficMarket
 }
 
-func (mc *MarketClient) GetClient() *ethclient.Client{
+func (mc *MarketClient) GetClient() *ethclient.Client {
 	return mc.client
 }
 
@@ -63,5 +63,5 @@ func test(user common.Address) {
 	defer mc.Close()
 
 	hop, eth, ap, _ := mc.TokenBalance(nil, user)
-	fmt.Println(hop, eth, ap)
+	fmt.Println(hop.String(), eth.String(), ap.String())
 }
