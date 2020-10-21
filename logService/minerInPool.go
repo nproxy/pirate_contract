@@ -33,7 +33,12 @@ const (
 	ActQuit
 )
 
-var minerActHistory map[[32]byte]*MinerInPoolData
+type MinerActStore struct {
+	acts map[[32]byte]*MinerInPoolData
+	lock sync.Mutex
+}
+
+var minerActHistory *MinerActStore
 
 var MinerActNotify func(addr [32]byte, h *MinerInPoolDataHistory) error
 
@@ -144,16 +149,19 @@ func minerAct2Address(key []byte) (miner [32]byte, err error) {
 	return miner, nil
 }
 
-func addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Address, act int, pos types.Log) {
-	mip, ok := minerActHistory[miner]
+func _addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Address, act int, pos types.Log) (bool, *MinerInPoolDataHistory) {
+	minerActHistory.lock.Lock()
+	defer minerActHistory.lock.Unlock()
+
+	mip, ok := minerActHistory.acts[miner]
 	if !ok {
-		minerActHistory[miner] = &MinerInPoolData{}
-		mip = minerActHistory[miner]
+		minerActHistory.acts[miner] = &MinerInPoolData{}
+		mip = minerActHistory.acts[miner]
 	}
 
 	for _, history := range mip.History {
 		if history.BlockNumber == pos.BlockNumber && history.TxIndex == pos.TxIndex {
-			return
+			return false, nil
 		}
 	}
 
@@ -176,7 +184,14 @@ func addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Addr
 		MinerInPoolInst.quit(miner, poolFrom)
 	}
 
-	if MinerActNotify != nil {
+	return true, h
+}
+
+func addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Address, act int, pos types.Log) {
+
+	n, h := _addNewMinerActHistory(miner, poolFrom, poolTo, payAddr, act, pos)
+
+	if n && MinerActNotify != nil {
 		MinerActNotify(miner, h)
 	}
 
@@ -254,6 +269,8 @@ func curMinerActBlockN(n uint64) {
 }
 
 func recoverMinerAct() error {
+	minerActHistory.lock.Lock()
+	defer minerActHistory.lock.Unlock()
 	allma := GetLogConf().BatchGet([]byte(minerActKeyHead), nil)
 
 	for i := 0; i < len(allma); i++ {
@@ -264,10 +281,10 @@ func recoverMinerAct() error {
 			continue
 		}
 
-		mip, ok := minerActHistory[maddr]
+		mip, ok := minerActHistory.acts[maddr]
 		if !ok {
-			minerActHistory[maddr] = &MinerInPoolData{}
-			mip = minerActHistory[maddr]
+			minerActHistory.acts[maddr] = &MinerInPoolData{}
+			mip = minerActHistory.acts[maddr]
 		}
 
 		h := &MinerInPoolDataHistory{}
@@ -309,7 +326,8 @@ func init() {
 		poolMiner: make(map[common.Address]map[[32]byte]common.Address),
 	}
 
-	minerActHistory = make(map[[32]byte]*MinerInPoolData)
+	store := make(map[[32]byte]*MinerInPoolData)
+	minerActHistory = &MinerActStore{acts: store}
 
 	logMinerActSrvItem = &LogServiceItem{}
 	logMinerActSrvItem.name = "MinerEvent"

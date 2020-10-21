@@ -11,6 +11,7 @@ import (
 	"github.com/hyperorchidlab/pirate_contract/contract"
 	"math/big"
 	"strings"
+	"sync"
 )
 
 type PoolClaimData struct {
@@ -29,8 +30,13 @@ type PoolClaimHistory struct {
 
 var poolClaimEventPos EventPos
 
+type PoolClaimStore struct {
+	claims map[common.Address]map[common.Address]*PoolClaimData
+	lock   sync.Mutex
+}
+
 //                     pool addr          user addr
-var poolClaimUser map[common.Address]map[common.Address]*PoolClaimData
+var poolClaimUser *PoolClaimStore
 
 var PoolClaimNotify func(pool, user common.Address, pch *PoolClaimHistory) error
 
@@ -38,7 +44,10 @@ var poolClaimKeyHead = "pool_claim_"
 var poolClaimKey = poolClaimKeyHead + "%s_%s_%d_%d"
 
 func GetPoolClaim(pool common.Address, user common.Address) *PoolClaimHistory {
-	v, ok := poolClaimUser[pool]
+	poolClaimUser.lock.Lock()
+	defer poolClaimUser.lock.Unlock()
+
+	v, ok := poolClaimUser.claims[pool]
 	if !ok {
 		return nil
 	}
@@ -89,11 +98,14 @@ func poolClaimKey2Address(key []byte) (pool common.Address, user common.Address,
 	return
 }
 
-func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, token, microNonce, claimNonce *big.Int) {
-	v, ok := poolClaimUser[pool]
+func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, token, microNonce, claimNonce *big.Int) (bool, *PoolClaimHistory) {
+	poolClaimUser.lock.Lock()
+	defer poolClaimUser.lock.Unlock()
+
+	v, ok := poolClaimUser.claims[pool]
 	if !ok {
-		poolClaimUser[pool] = make(map[common.Address]*PoolClaimData)
-		v = poolClaimUser[pool]
+		poolClaimUser.claims[pool] = make(map[common.Address]*PoolClaimData)
+		v = poolClaimUser.claims[pool]
 	}
 
 	_, ok = v[user]
@@ -103,7 +115,7 @@ func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, to
 
 	for _, history := range v[user].History {
 		if history.BlockNumber == l.BlockNumber && history.TxIndex == l.TxIndex {
-			return
+			return false, nil
 		}
 	}
 
@@ -116,8 +128,14 @@ func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, to
 	dbv, _ := json.Marshal(*h)
 
 	GetLogConf().Save([]byte(k), dbv)
+
+	return true, h
+}
+
+func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, token, microNonce, claimNonce *big.Int) {
+	n, h := _addNewPoolClaimnHistory(pool, user, l, traffic, token, microNonce, claimNonce)
 	//GetLogConf().db.Put([]byte(k),dbv,nil)
-	if PoolClaimNotify != nil {
+	if n && PoolClaimNotify != nil {
 		PoolClaimNotify(pool, user, h)
 	}
 
@@ -197,6 +215,9 @@ func curPoolClaimBlockN(n uint64) {
 func recoverPoolClaim() error {
 	allcm := GetLogConf().BatchGet([]byte(poolClaimKeyHead), nil)
 
+	poolClaimUser.lock.Lock()
+	defer poolClaimUser.lock.Unlock()
+
 	for i := 0; i < len(allcm); i++ {
 		cm := allcm[i]
 		pool, user, err := poolClaimKey2Address(cm.key)
@@ -204,10 +225,10 @@ func recoverPoolClaim() error {
 			fmt.Println("key", string(cm.key), err)
 			continue
 		}
-		v, ok := poolClaimUser[pool]
+		v, ok := poolClaimUser.claims[pool]
 		if !ok {
-			poolClaimUser[pool] = make(map[common.Address]*PoolClaimData)
-			v = poolClaimUser[pool]
+			poolClaimUser.claims[pool] = make(map[common.Address]*PoolClaimData)
+			v = poolClaimUser.claims[pool]
 		}
 
 		_, ok = v[user]
@@ -244,7 +265,8 @@ func recoverPoolClaim() error {
 
 func init() {
 
-	poolClaimUser = make(map[common.Address]map[common.Address]*PoolClaimData)
+	store := make(map[common.Address]map[common.Address]*PoolClaimData)
+	poolClaimUser = &PoolClaimStore{claims: store}
 
 	logPoolClaimSrvItem = &LogServiceItem{}
 	logPoolClaimSrvItem.name = "PoolClaim"

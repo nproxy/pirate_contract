@@ -11,6 +11,7 @@ import (
 	"github.com/hyperorchidlab/pirate_contract/contract"
 	"math/big"
 	"strings"
+	"sync"
 )
 
 type UserChargeHistory struct {
@@ -25,10 +26,19 @@ type UserCharge struct {
 
 var userChargeEvent EventPos
 
-var usersInPool map[common.Address]map[common.Address]*UserCharge
+type UserStore struct {
+	users map[common.Address]map[common.Address]*UserCharge
+	lock  sync.Mutex
+}
+
+var usersInPool *UserStore
 
 func GetUserList(pool common.Address) ([]common.Address, error) {
-	v, ok := usersInPool[pool]
+
+	usersInPool.lock.Lock()
+	defer usersInPool.lock.Unlock()
+
+	v, ok := usersInPool.users[pool]
 	if !ok {
 		return nil, errors.New("no pool in mem")
 	}
@@ -65,11 +75,14 @@ func userChargeKey2Address(key []byte) (pool, user common.Address, err error) {
 	return
 }
 
-func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int) {
-	v, ok := usersInPool[pool]
+func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int) bool {
+	usersInPool.lock.Lock()
+	defer usersInPool.lock.Unlock()
+
+	v, ok := usersInPool.users[pool]
 	if !ok {
-		usersInPool[pool] = make(map[common.Address]*UserCharge)
-		v = usersInPool[pool]
+		usersInPool.users[pool] = make(map[common.Address]*UserCharge)
+		v = usersInPool.users[pool]
 	}
 	_, ok = v[user]
 	if !ok {
@@ -78,7 +91,7 @@ func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount
 
 	for _, history := range v[user].History {
 		if history.BlockNumber == l.BlockNumber && history.TxIndex == l.TxIndex {
-			return
+			return false
 		}
 	}
 
@@ -92,10 +105,16 @@ func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount
 
 	GetLogConf().Save([]byte(key), dbv)
 
-	if UserChargeNotify != nil {
+	return true
+}
+
+func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int) {
+
+	n := _addNewUserChargeHistory(pool, user, l, tokenAmount)
+
+	if n && UserChargeNotify != nil {
 		UserChargeNotify(user, pool, tokenAmount)
 	}
-
 }
 
 func batchUserCharge() error {
@@ -165,6 +184,8 @@ func watchUserCharge(batch *chan *LogServiceItem) error {
 func recoverUserCharge() error {
 	alluc := GetLogConf().BatchGet([]byte(userChargeKeyHead), nil)
 
+	usersInPool.lock.Lock()
+	defer usersInPool.lock.Unlock()
 	for i := 0; i < len(alluc); i++ {
 		uc := alluc[i]
 
@@ -173,10 +194,10 @@ func recoverUserCharge() error {
 			fmt.Println("key", string(uc.key), err)
 			continue
 		}
-		v, ok := usersInPool[pool]
+		v, ok := usersInPool.users[pool]
 		if !ok {
-			usersInPool[pool] = make(map[common.Address]*UserCharge)
-			v = usersInPool[pool]
+			usersInPool.users[pool] = make(map[common.Address]*UserCharge)
+			v = usersInPool.users[pool]
 		}
 		_, ok = v[user]
 		if !ok {
@@ -217,7 +238,8 @@ func curUserChargeBlockN(n uint64) {
 
 func init() {
 
-	usersInPool = make(map[common.Address]map[common.Address]*UserCharge)
+	store := make(map[common.Address]map[common.Address]*UserCharge)
+	usersInPool = &UserStore{users: store}
 
 	logUserChargeSrvItem = &LogServiceItem{}
 	logUserChargeSrvItem.name = "Charge"
