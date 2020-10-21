@@ -1,4 +1,4 @@
-package transaction
+package trafficmarket
 
 import (
 	"crypto/ecdsa"
@@ -6,15 +6,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/hyperorchidlab/pirate_contract"
 	"github.com/hyperorchidlab/pirate_contract/config"
-	"github.com/hyperorchidlab/pirate_contract/reader"
 	"github.com/hyperorchidlab/pirate_contract/storageService"
 	"math/big"
 )
 
-func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
-
+func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return nil
@@ -22,26 +19,6 @@ func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
-
-	tx, err := mc.RegPool(transactor)
-
-	if err != nil {
-		fmt.Println("can't reg pool:", err)
-		return nil
-	}
-
-	return tx
-}
-
-func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
-	mc, err := config.SysEthConfig.NewClient()
-	if err != nil {
-		return nil
-	}
-	defer mc.Close()
-
-	transactor := bind.NewKeyedTransactor(priKey)
-
 	var index int
 	index, err = storageService.GetPoolIndex(poolAddr)
 	if err != nil {
@@ -49,16 +26,16 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 		return nil
 	}
 
-	tx, err := mc.DestroyPool(transactor, big.NewInt(int64(index)))
+	tx, err := mc.JoinPool(transactor, poolAddr, big.NewInt(int64(index)), subAddr)
 
 	if err != nil {
-		fmt.Println("can't destroy pool:", err)
+		fmt.Println("can't join pool,", err)
+		return nil
 	}
-
 	return tx
 }
 
-func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
+func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return nil
@@ -67,10 +44,30 @@ func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := mc.Claim(transactor, userAddr, poolAddr, credit, amount, micNonce, cn, sig)
+	tx, err := mc.ChangePool(transactor, from, to, subAddr)
 
 	if err != nil {
-		fmt.Println("can't claim", err)
+		fmt.Println("can't change pool", err)
+		return nil
+	}
+
+	return tx
+}
+
+func RetireFromPool(from common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
+	mc, err := config.SysEthConfig.NewClient()
+	if err != nil {
+		return nil
+	}
+	defer mc.Close()
+
+	transactor := bind.NewKeyedTransactor(priKey)
+
+	tx, err := mc.RetireFromPool(transactor, from, subAddr)
+
+	if err != nil {
+		fmt.Println("can't retire", err)
+		return nil
 	}
 
 	return tx

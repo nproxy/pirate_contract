@@ -1,4 +1,4 @@
-package transaction
+package trafficmarket
 
 import (
 	"crypto/ecdsa"
@@ -11,7 +11,8 @@ import (
 	"math/big"
 )
 
-func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
+func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
+
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return nil
@@ -19,6 +20,26 @@ func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKe
 	defer mc.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
+
+	tx, err := mc.RegPool(transactor)
+
+	if err != nil {
+		fmt.Println("can't reg pool:", err)
+		return nil
+	}
+
+	return tx
+}
+
+func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
+	mc, err := config.SysEthConfig.NewClient()
+	if err != nil {
+		return nil
+	}
+	defer mc.Close()
+
+	transactor := bind.NewKeyedTransactor(priKey)
+
 	var index int
 	index, err = storageService.GetPoolIndex(poolAddr)
 	if err != nil {
@@ -26,16 +47,16 @@ func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKe
 		return nil
 	}
 
-	tx, err := mc.JoinPool(transactor, poolAddr, big.NewInt(int64(index)), subAddr)
+	tx, err := mc.DestroyPool(transactor, big.NewInt(int64(index)))
 
 	if err != nil {
-		fmt.Println("can't join pool,", err)
-		return nil
+		fmt.Println("can't destroy pool:", err)
 	}
+
 	return tx
 }
 
-func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
+func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return nil
@@ -44,30 +65,10 @@ func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.Private
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := mc.ChangePool(transactor, from, to, subAddr)
+	tx, err := mc.Claim(transactor, userAddr, poolAddr, credit, amount, micNonce, cn, sig)
 
 	if err != nil {
-		fmt.Println("can't change pool", err)
-		return nil
-	}
-
-	return tx
-}
-
-func RetireFromPool(from common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKey) *types.Transaction {
-	mc, err := config.SysEthConfig.NewClient()
-	if err != nil {
-		return nil
-	}
-	defer mc.Close()
-
-	transactor := bind.NewKeyedTransactor(priKey)
-
-	tx, err := mc.RetireFromPool(transactor, from, subAddr)
-
-	if err != nil {
-		fmt.Println("can't retire", err)
-		return nil
+		fmt.Println("can't claim", err)
 	}
 
 	return tx
