@@ -11,7 +11,7 @@ import (
 
 type LogConf struct {
 	db  *leveldb.DB
-	cfg *config.EthConfig
+	cfg *config.PlatEthConfig
 }
 
 var logConf *LogConf
@@ -133,7 +133,7 @@ func GetLogConf() *LogConf {
 	return logConf
 }
 
-func Configure(db *leveldb.DB, cfg *config.EthConfig) error {
+func Configure(db *leveldb.DB, cfg *config.PlatEthConfig) error {
 	if db == nil || cfg == nil {
 		return errors.New("need db and contract cfg")
 	}
