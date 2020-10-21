@@ -24,9 +24,3 @@ func BalanceEth(balance float64) *big.Int {
 
 	return vv
 }
-
-
-
-
-
-

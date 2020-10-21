@@ -11,11 +11,6 @@ import (
 	"github.com/hyperorchidlab/pirate_contract/util"
 )
 
-
-
-
-
-
 func TransferEth(target string, tokenNo float64, privateKey *ecdsa.PrivateKey) (string, error) {
 
 	client, err := config.SysEthConfig.NewEthClient()
@@ -24,7 +19,6 @@ func TransferEth(target string, tokenNo float64, privateKey *ecdsa.PrivateKey) (
 		return "", err
 	}
 	defer client.Close()
-
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
@@ -41,7 +35,7 @@ func TransferEth(target string, tokenNo float64, privateKey *ecdsa.PrivateKey) (
 	}
 
 	value := util.BalanceEth(tokenNo) // in wei (1 eth)
-	gasLimit := uint64(21000)        // in units
+	gasLimit := uint64(21000)         // in units
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
 		fmt.Println("[TransferEth]: SuggestGasPrice err:", err.Error())
@@ -70,8 +64,6 @@ func TransferEth(target string, tokenNo float64, privateKey *ecdsa.PrivateKey) (
 	}
 	return signedTx.Hash().Hex(), nil
 }
-
-
 
 func TxStatus(tx common.Hash) bool {
 

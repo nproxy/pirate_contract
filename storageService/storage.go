@@ -112,16 +112,14 @@ func GetPayForMiner(pool common.Address, miner [32]byte) (payAddr common.Address
 
 }
 
-func TokenBalance(userAddr string) (hop *big.Int,eth *big.Int, apr *big.Int)  {
-	mc,err:=config.SysEthConfig.NewClient()
-	if err!=nil{
+func TokenBalance(userAddr string) (hop *big.Int, eth *big.Int, apr *big.Int) {
+	mc, err := config.SysEthConfig.NewClient()
+	if err != nil {
 		return
 	}
 	defer mc.Close()
 
-	hop,eth,apr,_ = mc.TokenBalance(nil,common.HexToAddress(userAddr))
+	hop, eth, apr, _ = mc.TokenBalance(nil, common.HexToAddress(userAddr))
 
 	return
 }
-
-

@@ -13,7 +13,7 @@ import (
 )
 
 func QueryApproved(address common.Address) *big.Int {
-	t,err:=config.SysEthConfig.NewTokenClient()
+	t, err := config.SysEthConfig.NewTokenClient()
 	if err != nil {
 		fmt.Println("[QueryApproved]: tokenConn err:", err.Error())
 		return nil
@@ -28,10 +28,9 @@ func QueryApproved(address common.Address) *big.Int {
 	return a
 }
 
-
 func TransferERCToken(target string, tokenNo float64, key *ecdsa.PrivateKey) (string, error) {
 
-	t,err:=config.SysEthConfig.NewTokenClient()
+	t, err := config.SysEthConfig.NewTokenClient()
 	if err != nil {
 		fmt.Println("[TransferERCToken]: tokenConn err:", err.Error())
 		return "", err
@@ -52,9 +51,8 @@ func TransferERCToken(target string, tokenNo float64, key *ecdsa.PrivateKey) (st
 	return tx.Hash().Hex(), nil
 }
 
-
 func approve(no int64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client,err:=config.SysEthConfig.NewEthClient()
+	client, err := config.SysEthConfig.NewEthClient()
 	defer client.Close()
 
 	if err != nil {

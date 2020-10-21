@@ -23,13 +23,13 @@ type PlatEthConfig struct {
 var SysEthConfig = &PlatEthConfig{
 	EthConfig: EthConfig{
 		NetworkID: 3,
-		EthApiUrl: "https://ropsten.infura.io/v3/8533ef82c9744d38801f512fdd004133",
-		Token:     common.HexToAddress("0xad44c8493de3fe2b070f33927a315b50da9a0e25"),
-		Market:    common.HexToAddress("0xaF0FFac8b5674032c5f1DC2ce6b571a47AFCd896"),
+		EthApiUrl: "https://ropsten.infura.io/v3/df97d0caa3514b3d99e94bc7764cffa0",
+		Token:     common.HexToAddress("0xfdeaf9536c2374c3b7a1a7a427a83aea1811462c"),
+		Market:    common.HexToAddress("0x09381f7a2aff9b1fcbc0689a4e6607653651920a"),
 	},
 }
 
-func (ec *EthConfig)String() string  {
+func (ec *EthConfig) String() string {
 	return fmt.Sprintf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n"+
 		"+NetworkID:\t%d+\n"+
 		"+EthApiUrl:\t%s+\n"+
@@ -66,7 +66,7 @@ func (mc *MarketClient) Close() {
 
 func (ec *PlatEthConfig) NewClient() (*MarketClient, error) {
 
-	if ec.DirectNetFunc != nil{
+	if ec.DirectNetFunc != nil {
 		ec.DirectNetFunc()
 	}
 
@@ -85,17 +85,15 @@ func (ec *PlatEthConfig) NewClient() (*MarketClient, error) {
 	return &MarketClient{client: client, TrafficMarket: market}, nil
 }
 
-
-func (ec *PlatEthConfig)NewEthClient() (*ethclient.Client, error)  {
-	if ec.DirectNetFunc != nil{
+func (ec *PlatEthConfig) NewEthClient() (*ethclient.Client, error) {
+	if ec.DirectNetFunc != nil {
 		ec.DirectNetFunc()
 	}
 	return ethclient.Dial(ec.EthApiUrl)
 }
 
-
-func (ec *PlatEthConfig)NewTokenClient() (*TokenClient,error)  {
-	if ec.DirectNetFunc != nil{
+func (ec *PlatEthConfig) NewTokenClient() (*TokenClient, error) {
+	if ec.DirectNetFunc != nil {
 		ec.DirectNetFunc()
 	}
 	client, err := ethclient.Dial(ec.EthApiUrl)
@@ -103,15 +101,15 @@ func (ec *PlatEthConfig)NewTokenClient() (*TokenClient,error)  {
 		return nil, err
 	}
 	var token *contract.Token
-	token, err = contract.NewToken(ec.Token,client)
-	if err!=nil{
+	token, err = contract.NewToken(ec.Token, client)
+	if err != nil {
 		client.Close()
 		return nil, err
 	}
-	return &TokenClient{client: client,Token:token},nil
+	return &TokenClient{client: client, Token: token}, nil
 }
 
-func (tc *TokenClient)Close()  {
+func (tc *TokenClient) Close() {
 	if tc.client == nil {
 		return
 	}
@@ -119,8 +117,6 @@ func (tc *TokenClient)Close()  {
 	tc.client = nil
 
 }
-
-
 
 func test(user common.Address) {
 	mc, _ := SysEthConfig.NewClient()
