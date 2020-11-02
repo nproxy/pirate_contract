@@ -70,8 +70,8 @@ func (ls *LogService) RegLogSrv(lsi *LogServiceItem) error {
 	return nil
 }
 
-func (ls *LogService)ThreadWrapDaemon(sig chan struct{})  {
-	err:=ls.Daemon()
+func (ls *LogService) ThreadWrapDaemon(sig chan struct{}) {
+	err := ls.Daemon()
 	log.Fatal(err.Error())
 }
 

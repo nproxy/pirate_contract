@@ -16,7 +16,7 @@ type EthConfig struct {
 
 type PlatEthConfig struct {
 	EthConfig
-	DirectNetFunc func()		`json:"-"`
+	DirectNetFunc func() `json:"-"`
 }
 
 //change this to use mainnet

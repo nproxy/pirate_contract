@@ -27,27 +27,26 @@ func BalanceEth(balance float64) *big.Int {
 	return vv
 }
 
-func TrafficGBytes(traffic *big.Int) float64  {
-	f:=new(big.Float)
+func TrafficGBytes(traffic *big.Int) float64 {
+	f := new(big.Float)
 	f.SetString(traffic.String())
-	v:=new(big.Float).Quo(f,big.NewFloat(math.Pow10(9)))
+	v := new(big.Float).Quo(f, big.NewFloat(math.Pow10(9)))
 
-	vv,_:=v.Float64()
+	vv, _ := v.Float64()
 
 	return vv
 }
 
-func TrafficMBytes(traffic *big.Int) float64  {
-	f:=new(big.Float)
+func TrafficMBytes(traffic *big.Int) float64 {
+	f := new(big.Float)
 	f.SetString(traffic.String())
-	v:=new(big.Float).Quo(f,big.NewFloat(math.Pow10(6)))
+	v := new(big.Float).Quo(f, big.NewFloat(math.Pow10(6)))
 
-	vv,_:=v.Float64()
+	vv, _ := v.Float64()
 
 	return vv
 }
-
 
 func Float2String(f float64, point int) string {
-	return fmt.Sprintf("%."+strconv.Itoa(point)+"f",f)
+	return fmt.Sprintf("%."+strconv.Itoa(point)+"f", f)
 }

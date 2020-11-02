@@ -14,7 +14,7 @@ var (
 	poolsLock sync.Mutex
 	pools     []common.Address
 
-	pes *cabinet.PirateEthSetting
+	pes      *cabinet.PirateEthSetting
 	lastTime int64
 )
 
@@ -38,70 +38,66 @@ func GetPirateEthSettings() (*cabinet.PirateEthSetting, error) {
 
 func getCacheSetting(now int64) error {
 	var err error
-	pes,err = GetPirateEthSettings()
-	if err!=nil{
+	pes, err = GetPirateEthSettings()
+	if err != nil {
 		return err
 	}
 	lastTime = now
 	return nil
 }
 
-func GetCacheSetting() (*cabinet.PirateEthSetting,error)  {
-	now:=tools.GetNowMsTime()
-	if pes == nil{
-		if err:=getCacheSetting(now);err!=nil{
+func GetCacheSetting() (*cabinet.PirateEthSetting, error) {
+	now := tools.GetNowMsTime()
+	if pes == nil {
+		if err := getCacheSetting(now); err != nil {
 			return nil, err
 		}
-	}else{
-		if now - lastTime > 300000{
+	} else {
+		if now-lastTime > 300000 {
 			go getCacheSetting(now)
 		}
 	}
 
-	return pes,nil
+	return pes, nil
 }
 
-
-
-func Traffic2Balance(traffic *big.Int) (balance *big.Int,err error)  {
+func Traffic2Balance(traffic *big.Int) (balance *big.Int, err error) {
 	GetCacheSetting()
-	if pes == nil || pes.MBytesPerToken.Cmp(&big.Int{}) == 0{
-		return &big.Int{},errors.New("system error")
+	if pes == nil || pes.MBytesPerToken.Cmp(&big.Int{}) == 0 {
+		return &big.Int{}, errors.New("system error")
 	}
 
 	var z *big.Int
-	x,y:=&big.Int{},&big.Int{}
+	x, y := &big.Int{}, &big.Int{}
 	x.SetInt64(10)
 	y.SetInt64(12)
 
-	z = z.Exp(x,y,nil)
-	z = z.Mul(z,traffic)
-	z = z.Div(z,pes.MBytesPerToken)
+	z = z.Exp(x, y, nil)
+	z = z.Mul(z, traffic)
+	z = z.Div(z, pes.MBytesPerToken)
 
-	return z,nil
+	return z, nil
 }
 
-func Balance2Traffic(balance *big.Int) (traffic *big.Int,err error)  {
+func Balance2Traffic(balance *big.Int) (traffic *big.Int, err error) {
 	GetCacheSetting()
-	if pes == nil{
-		return &big.Int{},errors.New("system error")
+	if pes == nil {
+		return &big.Int{}, errors.New("system error")
 	}
 
 	var z *big.Int
-	x,y:=&big.Int{},&big.Int{}
+	x, y := &big.Int{}, &big.Int{}
 	x.SetInt64(10)
 	y.SetInt64(12)
 
-	z = z.Exp(x,y,nil)
-	t:=*balance
-	tt:=&t
-	tt = tt.Mul(tt,pes.MBytesPerToken)
-	z = tt.Div(tt,z)
+	z = z.Exp(x, y, nil)
+	t := *balance
+	tt := &t
+	tt = tt.Mul(tt, pes.MBytesPerToken)
+	z = tt.Div(tt, z)
 
-	return z,nil
+	return z, nil
 }
-
-
 
 func GetPoolsList() ([]common.Address, error) {
 	mc, err := config.SysEthConfig.NewClient()
@@ -183,7 +179,7 @@ func GetPayForMiner(pool common.Address, miner [32]byte) (payAddr common.Address
 
 }
 
-func TokenBalance2(user common.Address)  (hop *big.Int, eth *big.Int, apr *big.Int)  {
+func TokenBalance2(user common.Address) (hop *big.Int, eth *big.Int, apr *big.Int) {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return
@@ -196,7 +192,7 @@ func TokenBalance2(user common.Address)  (hop *big.Int, eth *big.Int, apr *big.I
 }
 
 func TokenBalance(userAddr string) (hop *big.Int, eth *big.Int, apr *big.Int) {
-	user:=common.HexToAddress(userAddr)
+	user := common.HexToAddress(userAddr)
 
 	return TokenBalance2(user)
 

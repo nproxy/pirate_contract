@@ -10,6 +10,5 @@ type PirateEthSetting struct {
 
 type PirateEthUserData struct {
 	ChargeBalance *big.Int
-	TotalTraffic         *big.Int
+	TotalTraffic  *big.Int
 }
-
