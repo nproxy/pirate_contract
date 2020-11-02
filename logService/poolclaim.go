@@ -21,10 +21,11 @@ type PoolClaimData struct {
 }
 
 type PoolClaimHistory struct {
-	Traffic    *big.Int `json:"traffic"`
-	Token      *big.Int `json:"token"`
-	MicroNonce *big.Int `json:"micro_nonce"`
-	ClaimNonce *big.Int `json:"claim_nonce"`
+	MinerUsedPacket *big.Int
+	MinerPacket     *big.Int
+	ClaimedBalance  *big.Int
+	PoolTotalPacket *big.Int
+	EventTyp        uint8
 	BlockPos
 }
 
@@ -35,7 +36,7 @@ type PoolClaimStore struct {
 	lock   sync.Mutex
 }
 
-//                     pool addr          user addr
+//pool addr          user addr
 var poolClaimUser *PoolClaimStore
 
 var PoolClaimNotify func(pool, user common.Address, pch *PoolClaimHistory) error
@@ -95,10 +96,11 @@ func poolClaimKey2Address(key []byte) (pool common.Address, user common.Address,
 	pool = common.HexToAddress(ksarr[2])
 	user = common.HexToAddress(ksarr[3])
 
+
 	return
 }
 
-func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, token, microNonce, claimNonce *big.Int) (bool, *PoolClaimHistory) {
+func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log,  minerUsedPacket, minerPacket, claimedBalance,poolTotalPacket *big.Int,typ uint8) (bool, *PoolClaimHistory) {
 	poolClaimUser.lock.Lock()
 	defer poolClaimUser.lock.Unlock()
 
@@ -120,11 +122,12 @@ func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, t
 	}
 
 	poolhistory := v[user]
-	h := &PoolClaimHistory{Traffic: traffic, Token: token, MicroNonce: microNonce, ClaimNonce: claimNonce,
+	h := &PoolClaimHistory{MinerUsedPacket: minerUsedPacket, MinerPacket: minerPacket, ClaimedBalance: claimedBalance, PoolTotalPacket: poolTotalPacket,EventTyp: typ,
 		BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}}
 	poolhistory.History = append(poolhistory.History, h)
 
 	k := getPoolClaimKey(pool, user, &h.BlockPos)
+
 	dbv, _ := json.Marshal(*h)
 
 	GetLogConf().Save([]byte(k), dbv)
@@ -132,8 +135,8 @@ func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, t
 	return true, h
 }
 
-func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, token, microNonce, claimNonce *big.Int) {
-	n, h := _addNewPoolClaimnHistory(pool, user, l, traffic, token, microNonce, claimNonce)
+func addNewPoolClaimnHistory(pool, user common.Address, l types.Log, traffic, token, microNonce, claimNonce *big.Int,typ uint8) {
+	n, h := _addNewPoolClaimnHistory(pool, user, l, traffic, token, microNonce, claimNonce,typ)
 	//GetLogConf().db.Put([]byte(k),dbv,nil)
 	if n && PoolClaimNotify != nil {
 		PoolClaimNotify(pool, user, h)
@@ -171,7 +174,7 @@ func batchPoolClaim() error {
 
 	for iter.Next() {
 		ev := iter.Event
-		addNewPoolClaimnHistory(ev.Pool, ev.User, ev.Raw, ev.Packet, ev.Tonken, ev.MicrNonce, ev.ClaimNonce)
+		addNewPoolClaimnHistory(ev.Pool, ev.User, ev.Raw, ev.MinerUsedPacket, ev.MinerPacket, ev.ClaimedBalance, ev.PoolTotalPacket,ev.EventTyp)
 		poolClaimEventPos.LastMax(ev.Raw)
 	}
 	poolClaimEventPos.LastBlkNum()
@@ -225,6 +228,7 @@ func recoverPoolClaim() error {
 			fmt.Println("key", string(cm.key), err)
 			continue
 		}
+
 		v, ok := poolClaimUser.claims[pool]
 		if !ok {
 			poolClaimUser.claims[pool] = make(map[common.Address]*PoolClaimData)

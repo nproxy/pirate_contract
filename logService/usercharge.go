@@ -52,6 +52,21 @@ func GetUserList(pool common.Address) ([]common.Address, error) {
 	return uas, nil
 }
 
+func GetSubPools(user common.Address) []common.Address  {
+	usersInPool.lock.Lock()
+	defer usersInPool.lock.Unlock()
+
+	var pools []common.Address
+
+	for k,v:=range usersInPool.users{
+		if _,ok:=v[user];ok{
+			pools = append(pools,k)
+		}
+	}
+
+	return pools
+}
+
 var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int) error
 
 var userChargeKeyHead = "user_charge_"

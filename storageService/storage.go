@@ -5,6 +5,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/hyperorchidlab/pirate_contract/cabinet"
 	"github.com/hyperorchidlab/pirate_contract/config"
+	"github.com/kprc/nbsnetwork/tools"
 	"math/big"
 	"sync"
 )
@@ -12,6 +13,9 @@ import (
 var (
 	poolsLock sync.Mutex
 	pools     []common.Address
+
+	pes *cabinet.PirateEthSetting
+	lastTime int64
 )
 
 func GetPirateEthSettings() (*cabinet.PirateEthSetting, error) {
@@ -31,6 +35,73 @@ func GetPirateEthSettings() (*cabinet.PirateEthSetting, error) {
 	return pes, nil
 
 }
+
+func getCacheSetting(now int64) error {
+	var err error
+	pes,err = GetPirateEthSettings()
+	if err!=nil{
+		return err
+	}
+	lastTime = now
+	return nil
+}
+
+func GetCacheSetting() (*cabinet.PirateEthSetting,error)  {
+	now:=tools.GetNowMsTime()
+	if pes == nil{
+		if err:=getCacheSetting(now);err!=nil{
+			return nil, err
+		}
+	}else{
+		if now - lastTime > 300000{
+			go getCacheSetting(now)
+		}
+	}
+
+	return pes,nil
+}
+
+
+
+func Traffic2Balance(traffic *big.Int) (balance *big.Int,err error)  {
+	GetCacheSetting()
+	if pes == nil || pes.MBytesPerToken.Cmp(&big.Int{}) == 0{
+		return &big.Int{},errors.New("system error")
+	}
+
+	var z *big.Int
+	x,y:=&big.Int{},&big.Int{}
+	x.SetInt64(10)
+	y.SetInt64(12)
+
+	z = z.Exp(x,y,nil)
+	z = z.Mul(z,traffic)
+	z = z.Div(z,pes.MBytesPerToken)
+
+	return z,nil
+}
+
+func Balance2Traffic(balance *big.Int) (traffic *big.Int,err error)  {
+	GetCacheSetting()
+	if pes == nil{
+		return &big.Int{},errors.New("system error")
+	}
+
+	var z *big.Int
+	x,y:=&big.Int{},&big.Int{}
+	x.SetInt64(10)
+	y.SetInt64(12)
+
+	z = z.Exp(x,y,nil)
+	t:=*balance
+	tt:=&t
+	tt = tt.Mul(tt,pes.MBytesPerToken)
+	z = tt.Div(tt,z)
+
+	return z,nil
+}
+
+
 
 func GetPoolsList() ([]common.Address, error) {
 	mc, err := config.SysEthConfig.NewClient()
@@ -89,8 +160,8 @@ func GetUserData(pool common.Address, user common.Address) (*cabinet.PirateEthUs
 	}
 
 	peud := &cabinet.PirateEthUserData{
-		ChargeBalance: ud.ChargeBalance,
-		Epoch:         ud.Epoch,
+		ChargeBalance: ud.TotalChargeBalance,
+		TotalTraffic:  ud.TotalTraffic,
 	}
 
 	return peud, nil
@@ -112,14 +183,21 @@ func GetPayForMiner(pool common.Address, miner [32]byte) (payAddr common.Address
 
 }
 
-func TokenBalance(userAddr string) (hop *big.Int, eth *big.Int, apr *big.Int) {
+func TokenBalance2(user common.Address)  (hop *big.Int, eth *big.Int, apr *big.Int)  {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return
 	}
 	defer mc.Close()
 
-	hop, eth, apr, _ = mc.TokenBalance(nil, common.HexToAddress(userAddr))
+	hop, eth, apr, _ = mc.TokenBalance(nil, user)
 
 	return
+}
+
+func TokenBalance(userAddr string) (hop *big.Int, eth *big.Int, apr *big.Int) {
+	user:=common.HexToAddress(userAddr)
+
+	return TokenBalance2(user)
+
 }
