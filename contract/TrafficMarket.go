@@ -27,7 +27,7 @@ var (
 )
 
 // TrafficMarketABI is the input ABI used to generate the binding from.
-const TrafficMarketABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenAmount\",\"type\":\"uint256\"}],\"name\":\"Charge\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"addr1\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"addr2\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"payAddr\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"eventType\",\"type\":\"uint8\"}],\"name\":\"MinerEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"packet\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tonken\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"micrNonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"claimNonce\",\"type\":\"uint256\"}],\"name\":\"PoolClaim\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"poolAddr\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"eventType\",\"type\":\"uint8\"}],\"name\":\"PoolReg\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"SettingsChanged\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"MBytesPerToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"MinerDeposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"PoolDeposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Pools\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"UserData\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"chargeBalance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"blockChainSettings\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"}],\"name\":\"changePool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"pDpos\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"mDpos\",\"type\":\"uint256\"}],\"name\":\"changeSettings\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenNo\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"poolAddr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"charge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"credit\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"micNonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cn\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"claim\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"destroyPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"emergency\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getPoolList\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"}],\"name\":\"joinPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"payerForMiner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"regPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"}],\"name\":\"retireFromPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contractIERC20\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"userAddr\",\"type\":\"address\"}],\"name\":\"tokenBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const TrafficMarketABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenAddr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenAmount\",\"type\":\"uint256\"}],\"name\":\"Charge\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"addr1\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"addr2\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"payAddr\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"eventType\",\"type\":\"uint8\"}],\"name\":\"MinerEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minerUsedPacket\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minerPacket\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"claimedBalance\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"poolTotalPacket\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"eventTyp\",\"type\":\"uint8\"}],\"name\":\"PoolClaim\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"poolAddr\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"eventType\",\"type\":\"uint8\"}],\"name\":\"PoolReg\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"SettingsChanged\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"MBytesPerToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"MinerDeposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"PoolDeposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Pools\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"UserData\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"totalChargeBalance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalTraffic\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"blockChainSettings\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"}],\"name\":\"changePool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"pDpos\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"mDpos\",\"type\":\"uint256\"}],\"name\":\"changeSettings\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenNo\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"poolAddr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"charge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"destroyPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"emergency\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getPoolList\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"}],\"name\":\"joinPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"payerForMiner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"minerCredit\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minerAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"usedTraffic\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"pclaim\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"regPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"subAddr\",\"type\":\"bytes32\"}],\"name\":\"retireFromPool\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contractIERC20\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"userAddr\",\"type\":\"address\"}],\"name\":\"tokenBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // TrafficMarket is an auto generated Go binding around an Ethereum contract.
 type TrafficMarket struct {
@@ -277,14 +277,14 @@ func (_TrafficMarket *TrafficMarketCallerSession) Pools(arg0 *big.Int) (common.A
 
 // UserData is a free data retrieval call binding the contract method 0x5a903303.
 //
-// Solidity: function UserData(address , address ) view returns(uint256 chargeBalance, uint256 epoch)
+// Solidity: function UserData(address , address ) view returns(uint256 totalChargeBalance, uint256 totalTraffic)
 func (_TrafficMarket *TrafficMarketCaller) UserData(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (struct {
-	ChargeBalance *big.Int
-	Epoch         *big.Int
+	TotalChargeBalance *big.Int
+	TotalTraffic       *big.Int
 }, error) {
 	ret := new(struct {
-		ChargeBalance *big.Int
-		Epoch         *big.Int
+		TotalChargeBalance *big.Int
+		TotalTraffic       *big.Int
 	})
 	out := ret
 	err := _TrafficMarket.contract.Call(opts, out, "UserData", arg0, arg1)
@@ -293,20 +293,20 @@ func (_TrafficMarket *TrafficMarketCaller) UserData(opts *bind.CallOpts, arg0 co
 
 // UserData is a free data retrieval call binding the contract method 0x5a903303.
 //
-// Solidity: function UserData(address , address ) view returns(uint256 chargeBalance, uint256 epoch)
+// Solidity: function UserData(address , address ) view returns(uint256 totalChargeBalance, uint256 totalTraffic)
 func (_TrafficMarket *TrafficMarketSession) UserData(arg0 common.Address, arg1 common.Address) (struct {
-	ChargeBalance *big.Int
-	Epoch         *big.Int
+	TotalChargeBalance *big.Int
+	TotalTraffic       *big.Int
 }, error) {
 	return _TrafficMarket.Contract.UserData(&_TrafficMarket.CallOpts, arg0, arg1)
 }
 
 // UserData is a free data retrieval call binding the contract method 0x5a903303.
 //
-// Solidity: function UserData(address , address ) view returns(uint256 chargeBalance, uint256 epoch)
+// Solidity: function UserData(address , address ) view returns(uint256 totalChargeBalance, uint256 totalTraffic)
 func (_TrafficMarket *TrafficMarketCallerSession) UserData(arg0 common.Address, arg1 common.Address) (struct {
-	ChargeBalance *big.Int
-	Epoch         *big.Int
+	TotalChargeBalance *big.Int
+	TotalTraffic       *big.Int
 }, error) {
 	return _TrafficMarket.Contract.UserData(&_TrafficMarket.CallOpts, arg0, arg1)
 }
@@ -568,27 +568,6 @@ func (_TrafficMarket *TrafficMarketTransactorSession) Charge(user common.Address
 	return _TrafficMarket.Contract.Charge(&_TrafficMarket.TransactOpts, user, tokenNo, poolAddr, index)
 }
 
-// Claim is a paid mutator transaction binding the contract method 0x86edf11c.
-//
-// Solidity: function claim(address user, address pool, uint256 credit, uint256 amount, uint256 micNonce, uint256 cn, bytes signature) returns()
-func (_TrafficMarket *TrafficMarketTransactor) Claim(opts *bind.TransactOpts, user common.Address, pool common.Address, credit *big.Int, amount *big.Int, micNonce *big.Int, cn *big.Int, signature []byte) (*types.Transaction, error) {
-	return _TrafficMarket.contract.Transact(opts, "claim", user, pool, credit, amount, micNonce, cn, signature)
-}
-
-// Claim is a paid mutator transaction binding the contract method 0x86edf11c.
-//
-// Solidity: function claim(address user, address pool, uint256 credit, uint256 amount, uint256 micNonce, uint256 cn, bytes signature) returns()
-func (_TrafficMarket *TrafficMarketSession) Claim(user common.Address, pool common.Address, credit *big.Int, amount *big.Int, micNonce *big.Int, cn *big.Int, signature []byte) (*types.Transaction, error) {
-	return _TrafficMarket.Contract.Claim(&_TrafficMarket.TransactOpts, user, pool, credit, amount, micNonce, cn, signature)
-}
-
-// Claim is a paid mutator transaction binding the contract method 0x86edf11c.
-//
-// Solidity: function claim(address user, address pool, uint256 credit, uint256 amount, uint256 micNonce, uint256 cn, bytes signature) returns()
-func (_TrafficMarket *TrafficMarketTransactorSession) Claim(user common.Address, pool common.Address, credit *big.Int, amount *big.Int, micNonce *big.Int, cn *big.Int, signature []byte) (*types.Transaction, error) {
-	return _TrafficMarket.Contract.Claim(&_TrafficMarket.TransactOpts, user, pool, credit, amount, micNonce, cn, signature)
-}
-
 // DestroyPool is a paid mutator transaction binding the contract method 0x1bff1fcf.
 //
 // Solidity: function destroyPool(uint256 index) returns()
@@ -650,6 +629,27 @@ func (_TrafficMarket *TrafficMarketSession) JoinPool(poolAddr common.Address, in
 // Solidity: function joinPool(address poolAddr, uint256 index, bytes32 subAddr) returns()
 func (_TrafficMarket *TrafficMarketTransactorSession) JoinPool(poolAddr common.Address, index *big.Int, subAddr [32]byte) (*types.Transaction, error) {
 	return _TrafficMarket.Contract.JoinPool(&_TrafficMarket.TransactOpts, poolAddr, index, subAddr)
+}
+
+// Pclaim is a paid mutator transaction binding the contract method 0xc89531ef.
+//
+// Solidity: function pclaim(address user, address pool, uint256 minerCredit, uint256 minerAmount, uint256 usedTraffic, bytes signature) returns()
+func (_TrafficMarket *TrafficMarketTransactor) Pclaim(opts *bind.TransactOpts, user common.Address, pool common.Address, minerCredit *big.Int, minerAmount *big.Int, usedTraffic *big.Int, signature []byte) (*types.Transaction, error) {
+	return _TrafficMarket.contract.Transact(opts, "pclaim", user, pool, minerCredit, minerAmount, usedTraffic, signature)
+}
+
+// Pclaim is a paid mutator transaction binding the contract method 0xc89531ef.
+//
+// Solidity: function pclaim(address user, address pool, uint256 minerCredit, uint256 minerAmount, uint256 usedTraffic, bytes signature) returns()
+func (_TrafficMarket *TrafficMarketSession) Pclaim(user common.Address, pool common.Address, minerCredit *big.Int, minerAmount *big.Int, usedTraffic *big.Int, signature []byte) (*types.Transaction, error) {
+	return _TrafficMarket.Contract.Pclaim(&_TrafficMarket.TransactOpts, user, pool, minerCredit, minerAmount, usedTraffic, signature)
+}
+
+// Pclaim is a paid mutator transaction binding the contract method 0xc89531ef.
+//
+// Solidity: function pclaim(address user, address pool, uint256 minerCredit, uint256 minerAmount, uint256 usedTraffic, bytes signature) returns()
+func (_TrafficMarket *TrafficMarketTransactorSession) Pclaim(user common.Address, pool common.Address, minerCredit *big.Int, minerAmount *big.Int, usedTraffic *big.Int, signature []byte) (*types.Transaction, error) {
+	return _TrafficMarket.Contract.Pclaim(&_TrafficMarket.TransactOpts, user, pool, minerCredit, minerAmount, usedTraffic, signature)
 }
 
 // RegPool is a paid mutator transaction binding the contract method 0xbb219cb8.
@@ -1092,18 +1092,19 @@ func (it *TrafficMarketPoolClaimIterator) Close() error {
 
 // TrafficMarketPoolClaim represents a PoolClaim event raised by the TrafficMarket contract.
 type TrafficMarketPoolClaim struct {
-	Pool       common.Address
-	User       common.Address
-	Packet     *big.Int
-	Tonken     *big.Int
-	MicrNonce  *big.Int
-	ClaimNonce *big.Int
-	Raw        types.Log // Blockchain specific contextual infos
+	Pool            common.Address
+	User            common.Address
+	MinerUsedPacket *big.Int
+	MinerPacket     *big.Int
+	ClaimedBalance  *big.Int
+	PoolTotalPacket *big.Int
+	EventTyp        uint8
+	Raw             types.Log // Blockchain specific contextual infos
 }
 
-// FilterPoolClaim is a free log retrieval operation binding the contract event 0xe249550089b34fd8690cecdc0bd02ac66196461e455ee12c3024e64b17d7f355.
+// FilterPoolClaim is a free log retrieval operation binding the contract event 0x5080ddc9e6c2487524d33ce61176adb64b640339eee59c04d1d78c062932604d.
 //
-// Solidity: event PoolClaim(address indexed pool, address indexed user, uint256 packet, uint256 tonken, uint256 micrNonce, uint256 claimNonce)
+// Solidity: event PoolClaim(address indexed pool, address indexed user, uint256 minerUsedPacket, uint256 minerPacket, uint256 claimedBalance, uint256 poolTotalPacket, uint8 eventTyp)
 func (_TrafficMarket *TrafficMarketFilterer) FilterPoolClaim(opts *bind.FilterOpts, pool []common.Address, user []common.Address) (*TrafficMarketPoolClaimIterator, error) {
 
 	var poolRule []interface{}
@@ -1122,9 +1123,9 @@ func (_TrafficMarket *TrafficMarketFilterer) FilterPoolClaim(opts *bind.FilterOp
 	return &TrafficMarketPoolClaimIterator{contract: _TrafficMarket.contract, event: "PoolClaim", logs: logs, sub: sub}, nil
 }
 
-// WatchPoolClaim is a free log subscription operation binding the contract event 0xe249550089b34fd8690cecdc0bd02ac66196461e455ee12c3024e64b17d7f355.
+// WatchPoolClaim is a free log subscription operation binding the contract event 0x5080ddc9e6c2487524d33ce61176adb64b640339eee59c04d1d78c062932604d.
 //
-// Solidity: event PoolClaim(address indexed pool, address indexed user, uint256 packet, uint256 tonken, uint256 micrNonce, uint256 claimNonce)
+// Solidity: event PoolClaim(address indexed pool, address indexed user, uint256 minerUsedPacket, uint256 minerPacket, uint256 claimedBalance, uint256 poolTotalPacket, uint8 eventTyp)
 func (_TrafficMarket *TrafficMarketFilterer) WatchPoolClaim(opts *bind.WatchOpts, sink chan<- *TrafficMarketPoolClaim, pool []common.Address, user []common.Address) (event.Subscription, error) {
 
 	var poolRule []interface{}
@@ -1168,9 +1169,9 @@ func (_TrafficMarket *TrafficMarketFilterer) WatchPoolClaim(opts *bind.WatchOpts
 	}), nil
 }
 
-// ParsePoolClaim is a log parse operation binding the contract event 0xe249550089b34fd8690cecdc0bd02ac66196461e455ee12c3024e64b17d7f355.
+// ParsePoolClaim is a log parse operation binding the contract event 0x5080ddc9e6c2487524d33ce61176adb64b640339eee59c04d1d78c062932604d.
 //
-// Solidity: event PoolClaim(address indexed pool, address indexed user, uint256 packet, uint256 tonken, uint256 micrNonce, uint256 claimNonce)
+// Solidity: event PoolClaim(address indexed pool, address indexed user, uint256 minerUsedPacket, uint256 minerPacket, uint256 claimedBalance, uint256 poolTotalPacket, uint8 eventTyp)
 func (_TrafficMarket *TrafficMarketFilterer) ParsePoolClaim(log types.Log) (*TrafficMarketPoolClaim, error) {
 	event := new(TrafficMarketPoolClaim)
 	if err := _TrafficMarket.contract.UnpackLog(event, "PoolClaim", log); err != nil {

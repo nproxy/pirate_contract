@@ -30,10 +30,11 @@ contract TrafficMarket is owned {
     event PoolClaim(
         address indexed pool,
         address indexed user,
-        uint256 packet,
-        uint256 tonken,
-        uint256 micrNonce,
-        uint256 claimNonce);
+        uint256 minerUsedPacket,
+        uint256 minerPacket,
+        uint256 claimedBalance,
+        uint256 poolTotalPacket,
+        uint8 eventTyp);
     event Charge(
         address indexed user,
         address indexed pool,
@@ -46,8 +47,8 @@ contract TrafficMarket is owned {
         uint8 eventType);  // 0 for join, 1 for change, 2 for retire
 
     struct userData {
-        uint256 chargeBalance;
-        uint256 epoch;
+        uint256 totalChargeBalance;
+        uint256 totalTraffic;
     }
 
     modifier poolFind(address poolAddr, uint256 index){
@@ -107,23 +108,26 @@ contract TrafficMarket is owned {
         emit PoolReg(msg.sender,1);
 
     }
-
-    function claim(address user, address pool, uint256 credit, uint256 amount, uint256 micNonce, uint256 cn, bytes memory signature) public {
-        uint total = amount + credit;
+   //
+    function pclaim(address user, address pool, uint256 minerCredit, uint256 minerAmount, uint256 usedTraffic, bytes memory signature) public {
         userData memory ud = UserData[pool][user];
-        require( ud.epoch == cn, "Claim number mismatch");
-        bytes32 message = keccak256(abi.encode(this, token, user, pool, credit, amount, micNonce, cn));
+        require( ud.totalTraffic >= usedTraffic, "Claim number mismatch");
+        bytes32 message = keccak256(abi.encode(this, token, user, pool, minerCredit, minerAmount, usedTraffic));
         bytes32 msgHash = prefixed(message);
         require(recoverSigner(msgHash, signature) == user);
 
-        uint tn = total.mul(1 szabo).div(MBytesPerToken);
-        if (tn > ud.chargeBalance){
-            tn = ud.chargeBalance;
+        uint256 tn = (usedTraffic.sub(ud.totalTraffic)).mul(10**12).div(MBytesPerToken);
+        uint256 left = ud.totalChargeBalance.sub(ud.totalTraffic.mul(10**12).div(MBytesPerToken));
+        uint256 trs = tn;
+        if (tn > left){
+            trs = left;
+            UserData[pool][user] = userData(ud.totalChargeBalance,usedTraffic.sub((tn.sub(left)).mul(MBytesPerToken).div(10**12)));
+        }else{
+            UserData[pool][user] = userData(ud.totalChargeBalance,usedTraffic);
         }
-        token.transfer(msg.sender, tn);
-        UserData[pool][user] = userData(ud.epoch +1, ud.chargeBalance.sub(tn));
+        token.transfer(msg.sender, trs);
 
-        emit PoolClaim(pool, user, total, tn, micNonce, cn);
+        emit PoolClaim(pool, user, minerCredit,minerAmount ,trs, usedTraffic,0);
 
     }
 
@@ -152,9 +156,10 @@ contract TrafficMarket is owned {
     //user action
     function charge(address user, uint256 tokenNo, address poolAddr, uint256 index) public poolFind(poolAddr, index){
         token.transferFrom(msg.sender, address(this), tokenNo);
-        UserData[poolAddr][user].chargeBalance = UserData[poolAddr][user].chargeBalance.add(tokenNo);
+        UserData[poolAddr][user].totalChargeBalance = UserData[poolAddr][user].totalChargeBalance.add(tokenNo);
 
         emit Charge(user, poolAddr, tokenNo);
+        emit PoolClaim(poolAddr,user,0,0,tokenNo,0,1);
     }
 
     //miner action
