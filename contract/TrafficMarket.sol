@@ -33,12 +33,12 @@ contract TrafficMarket is owned {
         uint256 minerUsedPacket,
         uint256 minerPacket,
         uint256 claimedBalance,
-        uint256 poolTotalPacket,
-        uint8 eventTyp);
+        uint256 poolTotalPacket);
     event Charge(
         address indexed user,
         address indexed pool,
-        uint256 tokenAmount);
+        uint256 tokenAmount,
+        uint256 trafficAmount);
     event MinerEvent(
         bytes32 indexed subAddr,
         address indexed addr1,
@@ -127,7 +127,7 @@ contract TrafficMarket is owned {
         }
         token.transfer(msg.sender, trs);
 
-        emit PoolClaim(pool, user, minerCredit,minerAmount ,trs, usedTraffic,0);
+        emit PoolClaim(pool, user, minerCredit,minerAmount ,trs, usedTraffic);
 
     }
 
@@ -158,8 +158,7 @@ contract TrafficMarket is owned {
         token.transferFrom(msg.sender, address(this), tokenNo);
         UserData[poolAddr][user].totalChargeBalance = UserData[poolAddr][user].totalChargeBalance.add(tokenNo);
 
-        emit Charge(user, poolAddr, tokenNo);
-        emit PoolClaim(poolAddr,user,0,0,tokenNo,0,1);
+        emit Charge(user, poolAddr, UserData[poolAddr][user].totalChargeBalance,UserData[poolAddr][user].totalTraffic);
     }
 
     //miner action

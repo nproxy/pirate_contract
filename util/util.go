@@ -50,3 +50,12 @@ func TrafficMBytes(traffic *big.Int) float64 {
 func Float2String(f float64, point int) string {
 	return fmt.Sprintf("%."+strconv.Itoa(point)+"f", f)
 }
+
+
+func MaxBigInt(x,y *big.Int) *big.Int  {
+	if x.Cmp(y)>0{
+		return x
+	}
+
+	return y
+}

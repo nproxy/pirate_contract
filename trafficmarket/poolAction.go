@@ -56,7 +56,7 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 	return tx
 }
 
-func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
+func PClaim(userAddr, poolAddr common.Address, credit, amount, cn *big.Int, sig []byte, priKey *ecdsa.PrivateKey) *types.Transaction {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return nil
@@ -65,7 +65,7 @@ func Claim(userAddr, poolAddr common.Address, credit, amount, micNonce, cn *big.
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	tx, err := mc.Claim(transactor, userAddr, poolAddr, credit, amount, micNonce, cn, sig)
+	tx, err := mc.Pclaim(transactor, userAddr, poolAddr, credit, amount, cn, sig)
 
 	if err != nil {
 		fmt.Println("can't claim", err)

@@ -8,7 +8,9 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/hyperorchidlab/pirate_contract/cabinet"
 	"github.com/hyperorchidlab/pirate_contract/contract"
+	"github.com/hyperorchidlab/pirate_contract/util"
 	"math/big"
 	"strings"
 	"sync"
@@ -17,10 +19,13 @@ import (
 type UserChargeHistory struct {
 	BlockPos
 	TokenAmount *big.Int `json:"token_amount"`
+	TrafficAmount *big.Int `json:"traffic_amount"`
 }
 
 type UserCharge struct {
 	User    common.Address
+	TokenAmount *big.Int `json:"token_amount"`
+	TrafficAmount *big.Int `json:"traffic_amount"`
 	History []*UserChargeHistory
 }
 
@@ -67,7 +72,26 @@ func GetSubPools(user common.Address) []common.Address {
 	return pools
 }
 
-var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int) error
+func GetUserData(pool,user common.Address) *cabinet.PirateEthUserData  {
+	usersInPool.lock.Lock()
+	defer usersInPool.lock.Unlock()
+
+	v, ok := usersInPool.users[pool]
+	if !ok {
+		return nil
+	}
+	var uc *UserCharge
+	uc,ok = v[user]
+	if !ok{
+		return nil
+	}
+
+	return &cabinet.PirateEthUserData{TotalTraffic: uc.TrafficAmount,ChargeBalance: uc.TokenAmount}
+
+}
+
+
+var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int,trafficAmount *big.Int) error
 
 var userChargeKeyHead = "user_charge_"
 var userChargeKey = userChargeKeyHead + "%s_%s_%d_%d"
@@ -90,7 +114,8 @@ func userChargeKey2Address(key []byte) (pool, user common.Address, err error) {
 	return
 }
 
-func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int) bool {
+
+func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int,trafficAmount *big.Int) bool {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 
@@ -110,6 +135,9 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 		}
 	}
 
+	v[user].TrafficAmount = util.MaxBigInt(trafficAmount,v[user].TrafficAmount)
+	v[user].TokenAmount = util.MaxBigInt(tokenAmount,v[user].TokenAmount)
+
 	uc := v[user]
 	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount}
 
@@ -123,12 +151,12 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	return true
 }
 
-func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int) {
+func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int,trafficAmount *big.Int) {
 
-	n := _addNewUserChargeHistory(pool, user, l, tokenAmount)
+	n := _addNewUserChargeHistory(pool, user, l, tokenAmount,trafficAmount)
 
 	if n && UserChargeNotify != nil {
-		UserChargeNotify(user, pool, tokenAmount)
+		UserChargeNotify(user, pool, tokenAmount,trafficAmount)
 	}
 }
 
@@ -161,7 +189,7 @@ func batchUserCharge() error {
 
 	for iter.Next() {
 		ev := iter.Event
-		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount)
+		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount,ev.TrafficAmount)
 		userChargeEvent.LastMax(ev.Raw)
 	}
 
@@ -234,6 +262,8 @@ func recoverUserCharge() error {
 		}
 
 		muc := v[user]
+		muc.TokenAmount = util.MaxBigInt(dbv.TokenAmount,muc.TokenAmount)
+		muc.TrafficAmount = util.MaxBigInt(dbv.TrafficAmount,muc.TrafficAmount)
 
 		userChargeEvent.LastMax2(dbv.BlockNumber, dbv.TxIndex)
 
