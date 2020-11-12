@@ -14,23 +14,29 @@ var (
 	poolsLock sync.Mutex
 	pools     []common.Address
 
+	peslock  sync.Mutex
+	pesonce  sync.Once
 	pes      *cabinet.PirateEthSetting
 	lastTime int64
 )
 
-func GetPirateEthSettings() (*cabinet.PirateEthSetting, error) {
+func getPirateEthSettings() (*cabinet.PirateEthSetting, error) {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
 		return nil, err
 	}
 	defer mc.Close()
 
-	pes := &cabinet.PirateEthSetting{}
+	p := &cabinet.PirateEthSetting{}
 
-	pes.MBytesPerToken, pes.PoolDeposit, pes.MinerDeposit, err = mc.BlockChainSettings(nil)
+	p.MBytesPerToken, p.PoolDeposit, p.MinerDeposit, err = mc.BlockChainSettings(nil)
 	if err != nil {
 		return nil, err
 	}
+
+	peslock.Lock()
+	defer peslock.Unlock()
+	pes = p
 
 	return pes, nil
 
@@ -38,7 +44,7 @@ func GetPirateEthSettings() (*cabinet.PirateEthSetting, error) {
 
 func getCacheSetting(now int64) error {
 	var err error
-	pes, err = GetPirateEthSettings()
+	getPirateEthSettings()
 	if err != nil {
 		return err
 	}
@@ -179,10 +185,10 @@ func GetPayForMiner(pool common.Address, miner [32]byte) (payAddr common.Address
 
 }
 
-func TokenBalance2(user common.Address) (hop *big.Int, eth *big.Int, apr *big.Int) {
-	mc, err := config.SysEthConfig.NewClient()
-	if err != nil {
-		return
+func TokenBalance2(user common.Address) (hop *big.Int, eth *big.Int, apr *big.Int, err error) {
+	mc, e := config.SysEthConfig.NewClient()
+	if e != nil {
+		return nil, nil, nil, e
 	}
 	defer mc.Close()
 
@@ -191,7 +197,7 @@ func TokenBalance2(user common.Address) (hop *big.Int, eth *big.Int, apr *big.In
 	return
 }
 
-func TokenBalance(userAddr string) (hop *big.Int, eth *big.Int, apr *big.Int) {
+func TokenBalance(userAddr string) (hop *big.Int, eth *big.Int, apr *big.Int, err error) {
 	user := common.HexToAddress(userAddr)
 
 	return TokenBalance2(user)

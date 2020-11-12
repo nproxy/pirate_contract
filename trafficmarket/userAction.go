@@ -8,13 +8,14 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/hyperorchidlab/pirate_contract/config"
 	"github.com/hyperorchidlab/pirate_contract/storageService"
+	"github.com/hyperorchidlab/pirate_contract/util"
 	"math/big"
 )
 
-func Charge(userAddr, poolAddr common.Address, no int64, priKey *ecdsa.PrivateKey) *types.Transaction {
+func Charge(userAddr, poolAddr common.Address, no float64, priKey *ecdsa.PrivateKey) (*types.Transaction, error) {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	defer mc.Close()
 
@@ -24,18 +25,17 @@ func Charge(userAddr, poolAddr common.Address, no int64, priKey *ecdsa.PrivateKe
 	index, err = storageService.GetPoolIndex(poolAddr)
 	if err != nil {
 		fmt.Println("no pool in contract")
-		return nil
+		return nil, err
 	}
 
-	t := big.NewInt(no)
-	tokenNo := t.Mul(t, big.NewInt(1e18))
+	tokenNo := util.BalanceEth(no)
 
 	tx, err := mc.Charge(transactor, userAddr, tokenNo, poolAddr, big.NewInt(int64(index)))
 
 	if err != nil {
 		fmt.Println("can't charge", err)
-		return nil
+		return nil, err
 	}
 
-	return tx
+	return tx, nil
 }

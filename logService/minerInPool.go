@@ -238,7 +238,7 @@ func batchMinerInPool() error {
 var logMinerActSrvItem *LogServiceItem
 
 func watchMinerInPool(batch *chan *LogServiceItem) error {
-	mc, err := GetLogConf().NewMarketClient()
+	mc, err := GetLogConf().NewWSMarketClient()
 	if err != nil {
 		return err
 	}

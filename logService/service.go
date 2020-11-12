@@ -72,7 +72,7 @@ func (ls *LogService) RegLogSrv(lsi *LogServiceItem) error {
 
 func (ls *LogService) ThreadWrapDaemon(sig chan struct{}) {
 	err := ls.Daemon()
-	log.Fatal(err.Error())
+	log.Println(err)
 }
 
 func (ls *LogService) Daemon() error {
@@ -105,15 +105,17 @@ func (ls *LogService) Daemon() error {
 				return errors.New("do watch chan closed")
 			}
 
-			fmt.Println("start watch ", wlsi.name)
+			fmt.Println("try  to start watch ", wlsi.name)
 
 			go func() {
 				if !wlsi.ootw.Start() {
 					return
 				}
 				defer wlsi.ootw.Release()
+				fmt.Println("starting watch ", wlsi.name)
 				err := wlsi.watch(&ls.doBatchChan)
 				if err != nil {
+					fmt.Println("watch error: ", wlsi.name, err)
 					ls.watchErrChan <- wlsi.name
 				}
 
@@ -124,15 +126,17 @@ func (ls *LogService) Daemon() error {
 				return errors.New("do batch chan closed")
 			}
 
-			fmt.Println("start watch ", blsi.name)
+			fmt.Println("try to start batch ", blsi.name)
 
 			go func() {
 				if !blsi.ootb.Start() {
 					return
 				}
 				defer blsi.ootb.Release()
+				fmt.Println("starting batch ", blsi.name)
 				err := blsi.batch()
 				if err != nil {
+					fmt.Println("batch error: ", blsi.name, err)
 					ls.batchErrChan <- blsi.name
 				}
 

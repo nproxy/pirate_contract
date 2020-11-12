@@ -7,10 +7,25 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/hyperorchidlab/pirate_contract/config"
-	"github.com/hyperorchidlab/pirate_contract/contract"
 	"github.com/hyperorchidlab/pirate_contract/util"
 	"math/big"
 )
+
+func HopBalance(user common.Address) (*big.Int, error) {
+	t, err := config.SysEthConfig.NewTokenClient()
+	if err != nil {
+		fmt.Println("[QueryApproved]: tokenConn err:", err.Error())
+		return nil, err
+	}
+	defer t.Close()
+
+	h, e := t.BalanceOf(nil, user)
+	if e != nil {
+		return nil, err
+	}
+
+	return h, nil
+}
 
 func QueryApproved(address common.Address) *big.Int {
 	t, err := config.SysEthConfig.NewTokenClient()
@@ -51,34 +66,28 @@ func TransferERCToken(target string, tokenNo float64, key *ecdsa.PrivateKey) (st
 	return tx.Hash().Hex(), nil
 }
 
-func approve(no int64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) *types.Transaction {
-	client, err := config.SysEthConfig.NewEthClient()
-	defer client.Close()
+func approve(no float64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) (*types.Transaction, error) {
+	client, err := config.SysEthConfig.NewTokenClient()
 
 	if err != nil {
 		fmt.Println("can't connect to ethereum")
-		return nil
+		return nil, err
 	}
 
-	token, err := contract.NewToken(tokenAddr, client)
-
-	if err != nil {
-		fmt.Println("can't recover token")
-	}
+	defer client.Close()
 
 	transactor := bind.NewKeyedTransactor(priKey)
 
-	t := big.NewInt(no)
-	tokenNo := t.Mul(t, big.NewInt(1e18))
+	tokenNo := util.BalanceEth(no)
 
-	tx, err := token.Approve(transactor, spender, tokenNo)
+	tx, err := client.Approve(transactor, spender, tokenNo)
 
 	if err != nil {
-		fmt.Println("approve err:", err)
+		return nil, err
 	}
-	return tx
+	return tx, nil
 }
 
-func ApproveToMarket(no int64, priKey *ecdsa.PrivateKey) *types.Transaction {
+func ApproveToMarket(no float64, priKey *ecdsa.PrivateKey) (*types.Transaction, error) {
 	return approve(no, config.SysEthConfig.Token, config.SysEthConfig.Market, priKey)
 }

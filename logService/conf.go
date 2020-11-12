@@ -1,6 +1,7 @@
 package logService
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/btcsuite/goleveldb/leveldb"
 	"github.com/btcsuite/goleveldb/leveldb/opt"
@@ -129,8 +130,20 @@ func (lc *LogConf) NewMarketClient() (*config.MarketClient, error) {
 	return lc.cfg.NewClient()
 }
 
+func (lc *LogConf) NewWSMarketClient() (*config.MarketClient, error) {
+	if lc.cfg == nil {
+		panic("no config")
+	}
+	return lc.cfg.NewWSClient()
+}
+
 func GetLogConf() *LogConf {
 	return logConf
+}
+
+func (lc *LogConf) String() string {
+	j, _ := json.Marshal(*lc.cfg)
+	return string(j)
 }
 
 func Configure(db *leveldb.DB, cfg *config.PlatEthConfig) error {

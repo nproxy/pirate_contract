@@ -18,15 +18,15 @@ import (
 
 type UserChargeHistory struct {
 	BlockPos
-	TokenAmount *big.Int `json:"token_amount"`
+	TokenAmount   *big.Int `json:"token_amount"`
 	TrafficAmount *big.Int `json:"traffic_amount"`
 }
 
 type UserCharge struct {
-	User    common.Address
-	TokenAmount *big.Int `json:"token_amount"`
+	User          common.Address
+	TokenAmount   *big.Int `json:"token_amount"`
 	TrafficAmount *big.Int `json:"traffic_amount"`
-	History []*UserChargeHistory
+	History       []*UserChargeHistory
 }
 
 var userChargeEvent EventPos
@@ -72,7 +72,7 @@ func GetSubPools(user common.Address) []common.Address {
 	return pools
 }
 
-func GetUserData(pool,user common.Address) *cabinet.PirateEthUserData  {
+func GetUserData(pool, user common.Address) *cabinet.PirateEthUserData {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 
@@ -81,17 +81,16 @@ func GetUserData(pool,user common.Address) *cabinet.PirateEthUserData  {
 		return nil
 	}
 	var uc *UserCharge
-	uc,ok = v[user]
-	if !ok{
+	uc, ok = v[user]
+	if !ok {
 		return nil
 	}
 
-	return &cabinet.PirateEthUserData{TotalTraffic: uc.TrafficAmount,ChargeBalance: uc.TokenAmount}
+	return &cabinet.PirateEthUserData{TotalTraffic: uc.TrafficAmount, ChargeBalance: uc.TokenAmount}
 
 }
 
-
-var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int,trafficAmount *big.Int) error
+var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int, trafficAmount *big.Int) error
 
 var userChargeKeyHead = "user_charge_"
 var userChargeKey = userChargeKeyHead + "%s_%s_%d_%d"
@@ -114,8 +113,7 @@ func userChargeKey2Address(key []byte) (pool, user common.Address, err error) {
 	return
 }
 
-
-func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int,trafficAmount *big.Int) bool {
+func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int) bool {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 
@@ -135,8 +133,8 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 		}
 	}
 
-	v[user].TrafficAmount = util.MaxBigInt(trafficAmount,v[user].TrafficAmount)
-	v[user].TokenAmount = util.MaxBigInt(tokenAmount,v[user].TokenAmount)
+	v[user].TrafficAmount = util.MaxBigInt(trafficAmount, v[user].TrafficAmount)
+	v[user].TokenAmount = util.MaxBigInt(tokenAmount, v[user].TokenAmount)
 
 	uc := v[user]
 	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount}
@@ -151,12 +149,12 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	return true
 }
 
-func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int,trafficAmount *big.Int) {
+func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int) {
 
-	n := _addNewUserChargeHistory(pool, user, l, tokenAmount,trafficAmount)
+	n := _addNewUserChargeHistory(pool, user, l, tokenAmount, trafficAmount)
 
 	if n && UserChargeNotify != nil {
-		UserChargeNotify(user, pool, tokenAmount,trafficAmount)
+		UserChargeNotify(user, pool, tokenAmount, trafficAmount)
 	}
 }
 
@@ -189,7 +187,7 @@ func batchUserCharge() error {
 
 	for iter.Next() {
 		ev := iter.Event
-		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount,ev.TrafficAmount)
+		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount, ev.TrafficAmount)
 		userChargeEvent.LastMax(ev.Raw)
 	}
 
@@ -199,7 +197,7 @@ func batchUserCharge() error {
 }
 
 func watchUserCharge(batch *chan *LogServiceItem) error {
-	mc, err := GetLogConf().NewMarketClient()
+	mc, err := GetLogConf().NewWSMarketClient()
 	if err != nil {
 		return err
 	}
@@ -262,8 +260,8 @@ func recoverUserCharge() error {
 		}
 
 		muc := v[user]
-		muc.TokenAmount = util.MaxBigInt(dbv.TokenAmount,muc.TokenAmount)
-		muc.TrafficAmount = util.MaxBigInt(dbv.TrafficAmount,muc.TrafficAmount)
+		muc.TokenAmount = util.MaxBigInt(dbv.TokenAmount, muc.TokenAmount)
+		muc.TrafficAmount = util.MaxBigInt(dbv.TrafficAmount, muc.TrafficAmount)
 
 		userChargeEvent.LastMax2(dbv.BlockNumber, dbv.TxIndex)
 

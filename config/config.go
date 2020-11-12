@@ -5,6 +5,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract/contract"
+	"path"
+	"strings"
 )
 
 type EthConfig struct {
@@ -52,6 +54,10 @@ type TokenClient struct {
 	*contract.Token
 }
 
+func (tc *TokenClient) GetClient() *ethclient.Client {
+	return tc.client
+}
+
 func (mc *MarketClient) GetClient() *ethclient.Client {
 	return mc.client
 }
@@ -79,6 +85,50 @@ func (ec *PlatEthConfig) NewClient() (*MarketClient, error) {
 	market, err = contract.NewTrafficMarket(ec.Market, client)
 	if err != nil {
 		client.Close()
+		return nil, err
+	}
+
+	return &MarketClient{client: client, TrafficMarket: market}, nil
+}
+
+func (ec *PlatEthConfig) NewWSClient() (*MarketClient, error) {
+	url := ec.EthApiUrl
+	arr := strings.Split(url, "://")
+	host := arr[1]
+	arr1 := strings.Split(host, "/")
+	var arr2 []string
+	for i := 0; i < len(arr1); i++ {
+		arr2 = append(arr2, arr1[i])
+		if i == 0 {
+			arr2 = append(arr2, "ws")
+		}
+	}
+	newhost := path.Join(arr2...)
+	dialurl := "wss://" + newhost
+
+	client, err := ethclient.Dial(dialurl)
+	if err != nil {
+		return nil, err
+	}
+
+	var market *contract.TrafficMarket
+	market, err = contract.NewTrafficMarket(ec.Market, client)
+	if err != nil {
+		client.Close()
+		return nil, err
+	}
+
+	return &MarketClient{client: client, TrafficMarket: market}, nil
+}
+
+func (ec *PlatEthConfig) NewMarketClient(client *ethclient.Client) (*MarketClient, error) {
+	//if ec.DirectNetFunc!=nil{
+	//	ec.DirectNetFunc()
+	//}
+	//
+	//var market *contract.TrafficMarket
+	market, err := contract.NewTrafficMarket(ec.Market, client)
+	if err != nil {
 		return nil, err
 	}
 

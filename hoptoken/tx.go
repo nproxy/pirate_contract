@@ -2,6 +2,7 @@ package hoptoken
 
 import (
 	"context"
+	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract/config"
@@ -18,9 +19,8 @@ const (
 
 //todo use transaction by hash
 func CheckTransactionStatus(hash common.Hash) (int, error) {
-	client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl)
+	client, err := config.SysEthConfig.NewEthClient()
 	if err != nil {
-		fmt.Println("[CheckTransactionStatus] err:", err.Error())
 		return SYSERROR, err
 	}
 	receipt, err := client.TransactionReceipt(context.Background(), hash)
@@ -50,7 +50,7 @@ func CheckTransactionStatus(hash common.Hash) (int, error) {
 }
 
 func IsPending(hash common.Hash) (bool, error) {
-	client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl)
+	client, err := config.SysEthConfig.NewEthClient()
 	if err != nil {
 		return false, err
 	}
@@ -59,7 +59,7 @@ func IsPending(hash common.Hash) (bool, error) {
 }
 
 func NextOnce(addr common.Address) (uint64, error) {
-	if client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl); err != nil {
+	if client, err := config.SysEthConfig.NewEthClient(); err != nil {
 		return 0, err
 	} else {
 		return client.NonceAt(context.Background(), addr, nil)
@@ -67,7 +67,7 @@ func NextOnce(addr common.Address) (uint64, error) {
 }
 
 func WaitMined(hash common.Hash) error {
-	client, err := ethclient.Dial(config.SysEthConfig.EthApiUrl)
+	client, err := config.SysEthConfig.NewEthClient()
 	if err != nil {
 		fmt.Println("[WaitMined]: ClientConn err:", err.Error())
 		return err
