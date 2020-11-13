@@ -42,6 +42,7 @@ var PoolClaimNotify func(pool, user common.Address, pch *PoolClaimHistory) error
 
 var poolClaimKeyHead = "pool_claim_"
 var poolClaimKey = poolClaimKeyHead + "%s_%s_%d_%d"
+var poolClaimKeyPattenEnd = poolClaimKeyHead + "0xffffffffffffffffffff"
 
 func GetPoolClaim(pool common.Address, user common.Address) *PoolClaimHistory {
 	poolClaimUser.lock.Lock()
@@ -216,7 +217,7 @@ func curPoolClaimBlockN(n uint64) {
 }
 
 func recoverPoolClaim() error {
-	allcm := GetLogConf().BatchGet([]byte(poolClaimKeyHead), nil)
+	allcm := GetLogConf().BatchGet([]byte(poolClaimKeyHead), []byte(poolClaimKeyPattenEnd))
 
 	poolClaimUser.lock.Lock()
 	defer poolClaimUser.lock.Unlock()

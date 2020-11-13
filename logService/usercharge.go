@@ -94,6 +94,7 @@ var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount 
 
 var userChargeKeyHead = "user_charge_"
 var userChargeKey = userChargeKeyHead + "%s_%s_%d_%d"
+var userChargeKeyPatternEnd = userChargeKeyHead + "0xffffffffffffffffffff"
 
 func getUserChargeKey(pool, user common.Address, pos *BlockPos) string {
 	return fmt.Sprintf(userChargeKey, pool.String(), user.String(), pos.BlockNumber, pos.TxIndex)
@@ -223,7 +224,7 @@ func watchUserCharge(batch *chan *LogServiceItem) error {
 }
 
 func recoverUserCharge() error {
-	alluc := GetLogConf().BatchGet([]byte(userChargeKeyHead), nil)
+	alluc := GetLogConf().BatchGet([]byte(userChargeKeyHead), []byte(userChargeKeyPatternEnd))
 
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()

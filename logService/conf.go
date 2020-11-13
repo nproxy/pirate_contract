@@ -3,6 +3,7 @@ package logService
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/btcsuite/goleveldb/leveldb"
 	"github.com/btcsuite/goleveldb/leveldb/opt"
 	"github.com/btcsuite/goleveldb/leveldb/util"
@@ -20,6 +21,13 @@ var logConf *LogConf
 type BlockPos struct {
 	BlockNumber uint64 `json:"block_number"`
 	TxIndex     uint   `json:"tx_index"`
+}
+
+func (bp *BlockPos) String() string {
+	msg := ""
+	msg += fmt.Sprintf("BlockNumber: %-12d", bp.BlockNumber)
+	msg += fmt.Sprintf("TxIndex    : %-12d", bp.TxIndex)
+	return msg
 }
 
 func (bp *BlockPos) Max(log types.Log) {
@@ -46,6 +54,22 @@ type EventPos struct {
 	lastAccessPos  *BlockPos
 	nextPos        *BlockPos
 	curBlockNumber uint64
+}
+
+func (ep *EventPos) String() string {
+	msg := ""
+	msg += "lastAccessPos:\r\n"
+	if ep.lastAccessPos != nil {
+		msg += ep.lastAccessPos.String() + "\r\n"
+	}
+	msg += "nextPos\r\n"
+	if ep.nextPos != nil {
+		msg += ep.nextPos.String() + "\r\n"
+	}
+
+	msg += fmt.Sprintf("CurBlockNumber: %-12d\r\n", ep.curBlockNumber)
+
+	return msg
 }
 
 func (ep *EventPos) LastMax(log types.Log) {

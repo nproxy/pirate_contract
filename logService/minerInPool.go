@@ -131,6 +131,8 @@ var minerActKeyHead = "miner_act_"
 
 var minerActKey = minerActKeyHead + "%s_%d_%d"
 
+var mineractKeyPatternEnd = minerActKeyHead + "HOzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+
 func getMinerActKey(miner [32]byte, pos *BlockPos) string {
 	return fmt.Sprintf(minerActKey, account.ConvertToID2(miner[:]).String(), pos.BlockNumber, pos.TxIndex)
 }
@@ -189,6 +191,8 @@ func _addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Add
 
 func addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Address, act int, pos types.Log) {
 
+	fmt.Println("new add miner act history", account.ConvertToID2(miner[:]).String(), poolFrom.String(), act)
+
 	n, h := _addNewMinerActHistory(miner, poolFrom, poolTo, payAddr, act, pos)
 
 	if n && MinerActNotify != nil {
@@ -198,9 +202,13 @@ func addNewMinerActHistory(miner [32]byte, poolFrom, poolTo, payAddr common.Addr
 }
 
 func batchMinerInPool() error {
+	fmt.Println("batch -->", minerActEventPos.String())
+
 	if minerActEventPos.IsDone() {
 		return nil
 	}
+
+	fmt.Println("batch ==>", minerActEventPos.String())
 
 	mc, err := GetLogConf().NewMarketClient()
 	if err != nil {
@@ -254,9 +262,10 @@ func watchMinerInPool(batch *chan *LogServiceItem) error {
 	for {
 		select {
 		case pc := <-c:
+			fmt.Println("-->", minerActEventPos.String())
 			minerActEventPos.NextMax(pc.Raw)
 			ch := *batch
-
+			fmt.Println("==>", minerActEventPos.String())
 			ch <- logMinerActSrvItem
 		case err = <-sub.Err():
 			return err
@@ -271,7 +280,7 @@ func curMinerActBlockN(n uint64) {
 func recoverMinerAct() error {
 	minerActHistory.lock.Lock()
 	defer minerActHistory.lock.Unlock()
-	allma := GetLogConf().BatchGet([]byte(minerActKeyHead), nil)
+	allma := GetLogConf().BatchGet([]byte(minerActKeyHead), []byte(mineractKeyPatternEnd))
 
 	for i := 0; i < len(allma); i++ {
 		ma := allma[i]

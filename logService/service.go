@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/kprc/nbsnetwork/tools"
+	"github.com/hyperorchidlab/go-miner-pool/util"
 	"log"
 	"sync"
 	"time"
@@ -23,8 +23,8 @@ type LogServiceItem struct {
 	recover     func() error
 	stop        chan struct{}
 	name        string
-	ootb        tools.OnlyOneThread
-	ootw        tools.OnlyOneThread
+	ootb        util.OnlyOneThread
+	ootw        util.OnlyOneThread
 	CurBlockNum func(cb uint64)
 	evPos       EventPos
 }
@@ -165,7 +165,7 @@ func (ls *LogService) Start() {
 		ls.doBatchChan <- v
 	}
 
-	ls.tc = time.NewTicker(time.Second * 17)
+	ls.tc = time.NewTicker(time.Second * 300)
 
 	go func() {
 		defer ls.tc.Stop()

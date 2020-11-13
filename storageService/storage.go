@@ -3,9 +3,9 @@ package storageService
 import (
 	"errors"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/hyperorchidlab/go-miner-pool/util"
 	"github.com/hyperorchidlab/pirate_contract/cabinet"
 	"github.com/hyperorchidlab/pirate_contract/config"
-	"github.com/kprc/nbsnetwork/tools"
 	"math/big"
 	"sync"
 )
@@ -53,7 +53,7 @@ func getCacheSetting(now int64) error {
 }
 
 func GetCacheSetting() (*cabinet.PirateEthSetting, error) {
-	now := tools.GetNowMsTime()
+	now := util.GetNowMsTime()
 	if pes == nil {
 		if err := getCacheSetting(now); err != nil {
 			return nil, err
