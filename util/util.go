@@ -52,6 +52,17 @@ func Float2String(f float64, point int) string {
 }
 
 func MaxBigInt(x, y *big.Int) *big.Int {
+	if x == nil && y == nil {
+		return &big.Int{}
+	}
+
+	if x == nil {
+		return y
+	}
+	if y == nil {
+		return x
+	}
+
 	if x.Cmp(y) > 0 {
 		return x
 	}

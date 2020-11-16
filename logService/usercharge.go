@@ -125,7 +125,7 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	}
 	_, ok = v[user]
 	if !ok {
-		v[user] = &UserCharge{User: user}
+		v[user] = &UserCharge{User: user, TokenAmount: &big.Int{}, TrafficAmount: &big.Int{}}
 	}
 
 	for _, history := range v[user].History {
@@ -243,7 +243,7 @@ func recoverUserCharge() error {
 		}
 		_, ok = v[user]
 		if !ok {
-			v[user] = &UserCharge{User: user}
+			v[user] = &UserCharge{User: user, TokenAmount: &big.Int{}, TrafficAmount: &big.Int{}}
 		}
 		dbv := &UserChargeHistory{}
 		json.Unmarshal(uc.vaule, dbv)
@@ -261,6 +261,7 @@ func recoverUserCharge() error {
 		}
 
 		muc := v[user]
+		fmt.Println(dbv.TrafficAmount.String(), dbv.TokenAmount.String())
 		muc.TokenAmount = util.MaxBigInt(dbv.TokenAmount, muc.TokenAmount)
 		muc.TrafficAmount = util.MaxBigInt(dbv.TrafficAmount, muc.TrafficAmount)
 

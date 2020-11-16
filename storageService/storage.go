@@ -91,16 +91,15 @@ func Balance2Traffic(balance *big.Int) (traffic *big.Int, err error) {
 		return &big.Int{}, errors.New("system error")
 	}
 
-	var z *big.Int
-	x, y := &big.Int{}, &big.Int{}
+	z, x, y := &big.Int{}, &big.Int{}, &big.Int{}
 	x.SetInt64(10)
 	y.SetInt64(12)
 
 	z = z.Exp(x, y, nil)
-	t := *balance
-	tt := &t
-	tt = tt.Mul(tt, pes.MBytesPerToken)
-	z = tt.Div(tt, z)
+	t := &big.Int{}
+	t.SetBytes(balance.Bytes())
+	t = t.Mul(t, pes.MBytesPerToken)
+	z = t.Div(t, z)
 
 	return z, nil
 }

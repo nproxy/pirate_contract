@@ -19,6 +19,8 @@ func Charge(userAddr, poolAddr common.Address, no float64, priKey *ecdsa.Private
 	}
 	defer mc.Close()
 
+	fmt.Println(config.SysEthConfig.String())
+
 	transactor := bind.NewKeyedTransactor(priKey)
 
 	var index int
@@ -29,6 +31,11 @@ func Charge(userAddr, poolAddr common.Address, no float64, priKey *ecdsa.Private
 	}
 
 	tokenNo := util.BalanceEth(no)
+
+	fmt.Println(userAddr.String())
+	fmt.Println(tokenNo.String())
+	fmt.Println(poolAddr.String())
+	fmt.Println(big.NewInt(int64(index)).String())
 
 	tx, err := mc.Charge(transactor, userAddr, tokenNo, poolAddr, big.NewInt(int64(index)))
 
