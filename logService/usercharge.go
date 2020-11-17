@@ -145,6 +145,10 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	key := getUserChargeKey(pool, user, &h.BlockPos)
 	dbv, _ := json.Marshal(*h)
 
+	fmt.Println("save to db ----------------\r\nkey ",key)
+	fmt.Println("dbv:",string(dbv))
+
+
 	GetLogConf().Save([]byte(key), dbv)
 
 	return true
@@ -259,6 +263,9 @@ func recoverUserCharge() error {
 		if found {
 			continue
 		}
+
+		fmt.Println("Recover from db key----------\r\n",string(uc.key))
+		fmt.Println("Recover from db value----------\r\n",string(uc.vaule))
 
 		muc := v[user]
 		fmt.Println(dbv.TrafficAmount.String(), dbv.TokenAmount.String())

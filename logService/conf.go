@@ -216,6 +216,14 @@ type DBKV struct {
 	vaule []byte
 }
 
+func dupBytes(bs []byte) []byte  {
+	db:=make([]byte,len(bs))
+
+	copy(db,bs)
+
+	return db
+}
+
 func (lc *LogConf) BatchGet(patternStart, patternEnd []byte) []*DBKV {
 	r := &util.Range{Start: patternStart, Limit: patternEnd}
 
@@ -225,7 +233,7 @@ func (lc *LogConf) BatchGet(patternStart, patternEnd []byte) []*DBKV {
 	var dbkv []*DBKV
 
 	for iter.Next() {
-		kv := &DBKV{key: iter.Key(), vaule: iter.Value()}
+		kv := &DBKV{key: dupBytes(iter.Key()), vaule: dupBytes(iter.Value())}
 		dbkv = append(dbkv, kv)
 	}
 
