@@ -57,9 +57,11 @@ func MaxBigInt(x, y *big.Int) *big.Int {
 	}
 
 	if x == nil {
+
 		return y
 	}
 	if y == nil {
+
 		return x
 	}
 

@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/hyperorchidlab/pirate_contract/contract"
+	"github.com/hyperorchidlab/pirate_contract/storageService"
 	"math/big"
 	"strings"
 	"sync"
@@ -17,6 +18,7 @@ import (
 type PoolClaimData struct {
 	PoolAddr common.Address `json:"pool_addr"`
 	UserAddr common.Address `json:"user_addr"`
+	UsedTraffic *big.Int
 	History  []*PoolClaimHistory
 }
 
@@ -99,6 +101,38 @@ func poolClaimKey2Address(key []byte) (pool common.Address, user common.Address,
 	return
 }
 
+func GetUsedTraffic(expectAdd *big.Int, left *big.Int, realAdd *big.Int, curUsed *big.Int) *big.Int {
+	if left.Cmp(realAdd) > 0{
+		return curUsed
+	}
+
+	if expectAdd == nil{
+		expectAdd = &big.Int{}
+	}
+	if left == nil{
+		left = &big.Int{}
+	}
+
+	if realAdd == nil{
+		realAdd = &big.Int{}
+	}
+
+	if curUsed == nil{
+		curUsed = &big.Int{}
+	}
+	z:=&big.Int{}
+
+	z = z.Sub(expectAdd,realAdd)
+
+	u:=&big.Int{}
+
+	t,_:=storageService.Balance2Traffic(z)
+
+	u = u.Sub(curUsed,t)
+
+	return u
+}
+
 func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, minerUsedPacket, minerPacket, claimedBalance, poolTotalPacket *big.Int) (bool, *PoolClaimHistory) {
 	poolClaimUser.lock.Lock()
 	defer poolClaimUser.lock.Unlock()
@@ -111,7 +145,7 @@ func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, minerUsedP
 
 	_, ok = v[user]
 	if !ok {
-		v[user] = &PoolClaimData{PoolAddr: pool, UserAddr: user}
+		v[user] = &PoolClaimData{PoolAddr: pool, UserAddr: user,UsedTraffic: &big.Int{}}
 	}
 
 	for _, history := range v[user].History {
@@ -124,6 +158,11 @@ func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, minerUsedP
 	h := &PoolClaimHistory{MinerUsedPacket: minerUsedPacket, MinerPacket: minerPacket, ClaimedBalance: claimedBalance, PoolTotalPacket: poolTotalPacket,
 		BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}}
 	poolhistory.History = append(poolhistory.History, h)
+
+	used:=GetUsedTraffic(minerUsedPacket,minerPacket,claimedBalance,poolTotalPacket)
+	if v[user].UsedTraffic.Cmp(used)<0{
+		v[user].UsedTraffic = used
+	}
 
 	k := getPoolClaimKey(pool, user, &h.BlockPos)
 
@@ -238,7 +277,7 @@ func recoverPoolClaim() error {
 
 		_, ok = v[user]
 		if !ok {
-			v[user] = &PoolClaimData{PoolAddr: pool, UserAddr: user}
+			v[user] = &PoolClaimData{PoolAddr: pool, UserAddr: user,UsedTraffic: &big.Int{}}
 		}
 
 		dbv := &PoolClaimHistory{}
@@ -256,6 +295,12 @@ func recoverPoolClaim() error {
 		if found {
 			continue
 		}
+
+		used:=GetUsedTraffic(dbv.MinerUsedPacket,dbv.MinerPacket,dbv.ClaimedBalance,dbv.PoolTotalPacket)
+		if v[user].UsedTraffic.Cmp(used)<0{
+			v[user].UsedTraffic = used
+		}
+
 
 		poolhistory := v[user]
 

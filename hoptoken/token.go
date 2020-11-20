@@ -66,7 +66,7 @@ func TransferERCToken(target string, tokenNo float64, key *ecdsa.PrivateKey) (st
 	return tx.Hash().Hex(), nil
 }
 
-func approve(no float64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) (*types.Transaction, error) {
+func Approve(no float64, tokenAddr, spender common.Address, priKey *ecdsa.PrivateKey) (*types.Transaction, error) {
 	client, err := config.SysEthConfig.NewTokenClient()
 
 	if err != nil {
@@ -89,5 +89,5 @@ func approve(no float64, tokenAddr, spender common.Address, priKey *ecdsa.Privat
 }
 
 func ApproveToMarket(no float64, priKey *ecdsa.PrivateKey) (*types.Transaction, error) {
-	return approve(no, config.SysEthConfig.Token, config.SysEthConfig.Market, priKey)
+	return Approve(no, config.SysEthConfig.Token, config.SysEthConfig.Market, priKey)
 }

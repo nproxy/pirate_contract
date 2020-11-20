@@ -111,7 +111,7 @@ contract TrafficMarket is owned {
    //
     function pclaim(address user, address pool, uint256 minerCredit, uint256 minerAmount, uint256 usedTraffic, bytes memory signature) public {
         userData memory ud = UserData[pool][user];
-        require( ud.totalTraffic >= usedTraffic, "Claim traffic mismatch");
+        require( usedTraffic >= ud.totalTraffic, "Claim traffic mismatch");
         bytes32 message = keccak256(abi.encode(this, token, user, pool, minerCredit, minerAmount, usedTraffic));
         bytes32 msgHash = prefixed(message);
         require(recoverSigner(msgHash, signature) == user);
@@ -127,7 +127,7 @@ contract TrafficMarket is owned {
         }
         token.transfer(msg.sender, trs);
 
-        emit PoolClaim(pool, user, minerCredit,minerAmount ,trs, usedTraffic);
+        emit PoolClaim(pool, user, tn, left,trs, usedTraffic);
 
     }
 
