@@ -74,7 +74,7 @@ func Traffic2Balance(traffic *big.Int) (balance *big.Int, err error) {
 	}
 
 	var z *big.Int
-	z,x, y := &big.Int{}, &big.Int{},&big.Int{}
+	z, x, y := &big.Int{}, &big.Int{}, &big.Int{}
 	x.SetInt64(10)
 	y.SetInt64(12)
 

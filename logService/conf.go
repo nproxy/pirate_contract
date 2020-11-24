@@ -216,10 +216,10 @@ type DBKV struct {
 	vaule []byte
 }
 
-func dupBytes(bs []byte) []byte  {
-	db:=make([]byte,len(bs))
+func dupBytes(bs []byte) []byte {
+	db := make([]byte, len(bs))
 
-	copy(db,bs)
+	copy(db, bs)
 
 	return db
 }

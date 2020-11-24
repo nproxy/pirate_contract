@@ -24,9 +24,9 @@ type UserChargeHistory struct {
 
 type UserCharge struct {
 	User          common.Address
-	TokenAmount   *big.Int `json:"token_amount"`
-	TrafficAmount *big.Int `json:"traffic_amount"`
-	History       []*UserChargeHistory  `json:"history"`
+	TokenAmount   *big.Int             `json:"token_amount"`
+	TrafficAmount *big.Int             `json:"traffic_amount"`
+	History       []*UserChargeHistory `json:"history"`
 }
 
 var userChargeEvent EventPos
@@ -134,12 +134,12 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 		}
 	}
 
-	fmt.Println("add user-----",v[user].TrafficAmount.String(),v[user].TokenAmount.String(),tokenAmount.String(),trafficAmount.String())
+	fmt.Println("add user-----", v[user].TrafficAmount.String(), v[user].TokenAmount.String(), tokenAmount.String(), trafficAmount.String())
 
 	v[user].TrafficAmount = util.MaxBigInt(trafficAmount, v[user].TrafficAmount)
 	v[user].TokenAmount = util.MaxBigInt(tokenAmount, v[user].TokenAmount)
 
-	fmt.Println("UserCharge: ",pool.String(),user.String(), v[user].TokenAmount,v[user].TrafficAmount)
+	fmt.Println("UserCharge: ", pool.String(), user.String(), v[user].TokenAmount, v[user].TrafficAmount)
 
 	uc := v[user]
 	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount}
@@ -149,7 +149,7 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	key := getUserChargeKey(pool, user, &h.BlockPos)
 	dbv, _ := json.Marshal(*h)
 
-	fmt.Println("UserCharge: Save to db",key,string(dbv))
+	fmt.Println("UserCharge: Save to db", key, string(dbv))
 
 	GetLogConf().Save([]byte(key), dbv)
 
@@ -161,7 +161,7 @@ func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount
 	n := _addNewUserChargeHistory(pool, user, l, tokenAmount, trafficAmount)
 
 	if n && UserChargeNotify != nil {
-		fmt.Println("UserCharge Notify:",pool.String(),user.String(),tokenAmount.String(),trafficAmount.String())
+		fmt.Println("UserCharge Notify:", pool.String(), user.String(), tokenAmount.String(), trafficAmount.String())
 		UserChargeNotify(user, pool, tokenAmount, trafficAmount)
 	}
 }
@@ -237,7 +237,7 @@ func recoverUserCharge() error {
 	defer usersInPool.lock.Unlock()
 	for i := 0; i < len(alluc); i++ {
 		uc := alluc[i]
-		fmt.Println("UserCharge: Recover from Db",string(uc.key),string(uc.vaule))
+		fmt.Println("UserCharge: Recover from Db", string(uc.key), string(uc.vaule))
 		pool, user, err := userChargeKey2Address(uc.key)
 		if err != nil {
 			fmt.Println("key", string(uc.key), err)
@@ -271,7 +271,7 @@ func recoverUserCharge() error {
 		fmt.Println(dbv.TrafficAmount.String(), dbv.TokenAmount.String())
 		muc.TokenAmount = util.MaxBigInt(dbv.TokenAmount, muc.TokenAmount)
 		muc.TrafficAmount = util.MaxBigInt(dbv.TrafficAmount, muc.TrafficAmount)
-		fmt.Println("UserCharge: Recover from db to mem",pool.String(),user.String(),muc.TokenAmount,muc.TrafficAmount)
+		fmt.Println("UserCharge: Recover from db to mem", pool.String(), user.String(), muc.TokenAmount, muc.TrafficAmount)
 		userChargeEvent.LastMax2(dbv.BlockNumber, dbv.TxIndex)
 
 		muc.History = append(muc.History, dbv)
