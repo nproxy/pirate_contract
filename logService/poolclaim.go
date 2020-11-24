@@ -125,7 +125,7 @@ func poolClaimKey2Address(key []byte) (pool common.Address, user common.Address,
 	return
 }
 
-func GetUsedTraffic(expectAdd *big.Int, left *big.Int, realAdd *big.Int, curUsed *big.Int) *big.Int {
+func getUsedTraffic(expectAdd *big.Int, left *big.Int, realAdd *big.Int, curUsed *big.Int) *big.Int {
 	if left == nil {
 		left = &big.Int{}
 	}
@@ -184,7 +184,7 @@ func _addNewPoolClaimnHistory(pool, user common.Address, l types.Log, minerUsedP
 		BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}}
 	poolhistory.History = append(poolhistory.History, h)
 
-	used := GetUsedTraffic(minerUsedPacket, minerPacket, claimedBalance, poolTotalPacket)
+	used := getUsedTraffic(minerUsedPacket, minerPacket, claimedBalance, poolTotalPacket)
 	if v[user].UsedTraffic.Cmp(used) < 0 {
 		v[user].UsedTraffic = used
 	}
@@ -321,7 +321,7 @@ func recoverPoolClaim() error {
 			continue
 		}
 
-		used := GetUsedTraffic(dbv.MinerUsedPacket, dbv.MinerPacket, dbv.ClaimedBalance, dbv.PoolTotalPacket)
+		used := getUsedTraffic(dbv.MinerUsedPacket, dbv.MinerPacket, dbv.ClaimedBalance, dbv.PoolTotalPacket)
 		if v[user].UsedTraffic.Cmp(used) < 0 {
 			v[user].UsedTraffic = used
 		}
