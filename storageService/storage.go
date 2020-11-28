@@ -44,7 +44,7 @@ func getPirateEthSettings() (*cabinet.PirateEthSetting, error) {
 
 func getCacheSetting(now int64) error {
 	var err error
-	getPirateEthSettings()
+	pes,err = getPirateEthSettings()
 	if err != nil {
 		return err
 	}
