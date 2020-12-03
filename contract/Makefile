@@ -1,7 +1,7 @@
 SHELL=PATH='$(PATH)' /bin/sh
 
 .PHONY: all
-all: abi
+all:
 	abigen --abi TrafficMarket.abi --pkg contract --type TrafficMarket --out TrafficMarket.go
 	abigen --abi hyperorchidprotocol.abi --pkg contract --type Token --out Token.go
 	#abigen --abi ExtendToken.abi --pkg contract --type ExtendToken --out ExtendToken.go
