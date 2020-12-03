@@ -81,3 +81,30 @@ func TxStatus(tx common.Hash) bool {
 	}
 	return receipt.Status == 1
 }
+
+const (
+	pending = iota
+	success
+	fail
+)
+
+func TxStatus2(tx common.Hash) int {
+
+	client, err := config.SysEthConfig.NewEthClient()
+	if err != nil {
+		fmt.Println("[BuyPacket]: connect err:", err.Error())
+		return fail
+	}
+	defer client.Close()
+
+	receipt, err := client.TransactionReceipt(context.Background(), tx)
+	if err != nil || receipt == nil{
+		fmt.Println("[BuyPacket]: query receipt err:", err.Error())
+		return fail
+	}
+	if receipt.Status == 1{
+		return success
+	}else{
+		return fail
+	}
+}
