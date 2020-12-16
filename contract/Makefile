@@ -16,5 +16,5 @@ abi:
 	solc --abi --overwrite HopShop.sol -o ./
 
 clean:
-	rm -f *.abi
+#	rm -f *.abi
 	rm -f *.go
