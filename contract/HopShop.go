@@ -137,7 +137,7 @@ func bindHopShop(address common.Address, caller bind.ContractCaller, transactor 
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_HopShop *HopShopRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_HopShop *HopShopRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _HopShop.Contract.HopShopCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_HopShop *HopShopRaw) Transact(opts *bind.TransactOpts, method string, par
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_HopShop *HopShopCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_HopShop *HopShopCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _HopShop.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +175,17 @@ func (_HopShop *HopShopTransactorRaw) Transact(opts *bind.TransactOpts, method s
 //
 // Solidity: function TokenNoToSellInLevel1() view returns(uint256)
 func (_HopShop *HopShopCaller) TokenNoToSellInLevel1(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "TokenNoToSellInLevel1")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "TokenNoToSellInLevel1")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // TokenNoToSellInLevel1 is a free data retrieval call binding the contract method 0x86bd3b70.
@@ -201,12 +206,17 @@ func (_HopShop *HopShopCallerSession) TokenNoToSellInLevel1() (*big.Int, error) 
 //
 // Solidity: function _adminWallet() view returns(address)
 func (_HopShop *HopShopCaller) AdminWallet(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "_adminWallet")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "_adminWallet")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // AdminWallet is a free data retrieval call binding the contract method 0x0ed22083.
@@ -227,12 +237,17 @@ func (_HopShop *HopShopCallerSession) AdminWallet() (common.Address, error) {
 //
 // Solidity: function _rateLevel1() view returns(uint256)
 func (_HopShop *HopShopCaller) RateLevel1(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "_rateLevel1")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "_rateLevel1")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // RateLevel1 is a free data retrieval call binding the contract method 0x93952cc2.
@@ -253,12 +268,17 @@ func (_HopShop *HopShopCallerSession) RateLevel1() (*big.Int, error) {
 //
 // Solidity: function _rateLevel2() view returns(uint256)
 func (_HopShop *HopShopCaller) RateLevel2(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "_rateLevel2")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "_rateLevel2")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // RateLevel2 is a free data retrieval call binding the contract method 0x386800bf.
@@ -279,12 +299,17 @@ func (_HopShop *HopShopCallerSession) RateLevel2() (*big.Int, error) {
 //
 // Solidity: function _token() view returns(address)
 func (_HopShop *HopShopCaller) Token(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "_token")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "_token")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Token is a free data retrieval call binding the contract method 0xecd0c0c3.
@@ -305,12 +330,17 @@ func (_HopShop *HopShopCallerSession) Token() (common.Address, error) {
 //
 // Solidity: function hasRaised() view returns(uint256)
 func (_HopShop *HopShopCaller) HasRaised(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "hasRaised")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "hasRaised")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // HasRaised is a free data retrieval call binding the contract method 0xec1d66c0.
@@ -331,12 +361,17 @@ func (_HopShop *HopShopCallerSession) HasRaised() (*big.Int, error) {
 //
 // Solidity: function owner() view returns(address)
 func (_HopShop *HopShopCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "owner")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -357,12 +392,17 @@ func (_HopShop *HopShopCallerSession) Owner() (common.Address, error) {
 //
 // Solidity: function remainingTokens() view returns(uint256)
 func (_HopShop *HopShopCaller) RemainingTokens(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _HopShop.contract.Call(opts, out, "remainingTokens")
-	return *ret0, err
+	var out []interface{}
+	err := _HopShop.contract.Call(opts, &out, "remainingTokens")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // RemainingTokens is a free data retrieval call binding the contract method 0xbf583903.
@@ -605,5 +645,6 @@ func (_HopShop *HopShopFilterer) ParseTokensPurchased(log types.Log) (*HopShopTo
 	if err := _HopShop.contract.UnpackLog(event, "TokensPurchased", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

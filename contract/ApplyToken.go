@@ -137,7 +137,7 @@ func bindApplyToken(address common.Address, caller bind.ContractCaller, transact
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ApplyToken *ApplyTokenRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ApplyToken *ApplyTokenRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ApplyToken.Contract.ApplyTokenCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_ApplyToken *ApplyTokenRaw) Transact(opts *bind.TransactOpts, method strin
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ApplyToken *ApplyTokenCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ApplyToken *ApplyTokenCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ApplyToken.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +175,17 @@ func (_ApplyToken *ApplyTokenTransactorRaw) Transact(opts *bind.TransactOpts, me
 //
 // Solidity: function TokenNoPerApplication() view returns(uint256)
 func (_ApplyToken *ApplyTokenCaller) TokenNoPerApplication(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _ApplyToken.contract.Call(opts, out, "TokenNoPerApplication")
-	return *ret0, err
+	var out []interface{}
+	err := _ApplyToken.contract.Call(opts, &out, "TokenNoPerApplication")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // TokenNoPerApplication is a free data retrieval call binding the contract method 0x5f98d6f4.
@@ -201,12 +206,17 @@ func (_ApplyToken *ApplyTokenCallerSession) TokenNoPerApplication() (*big.Int, e
 //
 // Solidity: function owner() view returns(address)
 func (_ApplyToken *ApplyTokenCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _ApplyToken.contract.Call(opts, out, "owner")
-	return *ret0, err
+	var out []interface{}
+	err := _ApplyToken.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -227,12 +237,17 @@ func (_ApplyToken *ApplyTokenCallerSession) Owner() (common.Address, error) {
 //
 // Solidity: function payer() view returns(address)
 func (_ApplyToken *ApplyTokenCaller) Payer(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _ApplyToken.contract.Call(opts, out, "payer")
-	return *ret0, err
+	var out []interface{}
+	err := _ApplyToken.contract.Call(opts, &out, "payer")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Payer is a free data retrieval call binding the contract method 0x123119cd.
@@ -253,12 +268,17 @@ func (_ApplyToken *ApplyTokenCallerSession) Payer() (common.Address, error) {
 //
 // Solidity: function token() view returns(address)
 func (_ApplyToken *ApplyTokenCaller) Token(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _ApplyToken.contract.Call(opts, out, "token")
-	return *ret0, err
+	var out []interface{}
+	err := _ApplyToken.contract.Call(opts, &out, "token")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Token is a free data retrieval call binding the contract method 0xfc0c546a.
