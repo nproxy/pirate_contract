@@ -17,6 +17,7 @@ contract TrafficMarket is owned {
     uint256 public MinerDeposit = 2000 * (10 ** decimal);
 
     //storage
+
     address[] public Pools;
     //      pool              user
     mapping(address=>mapping(address=>userData)) public UserData;
@@ -62,6 +63,10 @@ contract TrafficMarket is owned {
 
     function emergency() public onlyOwner{
         token.transfer(msg.sender, token.balanceOf(address(this)));
+    }
+
+    function LegalPool(address poolAddr, uint256 index) external view returns (bool) {
+        return (Pools[index] == poolAddr);
     }
 
     function changeSettings(uint256 price, uint256 pDpos, uint256 mDpos) external onlyOwner {
