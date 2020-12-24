@@ -145,8 +145,8 @@ contract PirateDeposit is owned{
             token.transfer(msg.sender, sumDs);
         }
 
-        uds.lastDrawRateTime = DrawRates[pool][DrawRates[pool].length-1].drawRateTime;
+        DepositDatas[pool][msg.sender].lastDrawRateTime = DrawRates[pool][DrawRates[pool].length-1].drawRateTime;
 
-        emit UserDrawRewardEvent(msg.sender, pool, sumDs, uds.lastDrawRateTime);
+        emit UserDrawRewardEvent(msg.sender, pool, sumDs, DepositDatas[pool][msg.sender].lastDrawRateTime);
     }
 }
