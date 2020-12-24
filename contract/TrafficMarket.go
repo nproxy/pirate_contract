@@ -137,7 +137,7 @@ func bindTrafficMarket(address common.Address, caller bind.ContractCaller, trans
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TrafficMarket *TrafficMarketRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TrafficMarket *TrafficMarketRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TrafficMarket.Contract.TrafficMarketCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_TrafficMarket *TrafficMarketRaw) Transact(opts *bind.TransactOpts, method
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TrafficMarket *TrafficMarketCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TrafficMarket *TrafficMarketCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TrafficMarket.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +175,17 @@ func (_TrafficMarket *TrafficMarketTransactorRaw) Transact(opts *bind.TransactOp
 //
 // Solidity: function MBytesPerToken() view returns(uint256)
 func (_TrafficMarket *TrafficMarketCaller) MBytesPerToken(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "MBytesPerToken")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "MBytesPerToken")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // MBytesPerToken is a free data retrieval call binding the contract method 0xfb44f734.
@@ -201,12 +206,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) MBytesPerToken() (*big.Int, er
 //
 // Solidity: function MinerDeposit() view returns(uint256)
 func (_TrafficMarket *TrafficMarketCaller) MinerDeposit(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "MinerDeposit")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "MinerDeposit")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // MinerDeposit is a free data retrieval call binding the contract method 0x9a3c7309.
@@ -227,12 +237,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) MinerDeposit() (*big.Int, erro
 //
 // Solidity: function PoolDeposit() view returns(uint256)
 func (_TrafficMarket *TrafficMarketCaller) PoolDeposit(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "PoolDeposit")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "PoolDeposit")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // PoolDeposit is a free data retrieval call binding the contract method 0x040912f6.
@@ -253,12 +268,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) PoolDeposit() (*big.Int, error
 //
 // Solidity: function Pools(uint256 ) view returns(address)
 func (_TrafficMarket *TrafficMarketCaller) Pools(opts *bind.CallOpts, arg0 *big.Int) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "Pools", arg0)
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "Pools", arg0)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Pools is a free data retrieval call binding the contract method 0x73dfccca.
@@ -282,13 +302,19 @@ func (_TrafficMarket *TrafficMarketCaller) UserData(opts *bind.CallOpts, arg0 co
 	TotalChargeBalance *big.Int
 	TotalTraffic       *big.Int
 }, error) {
-	ret := new(struct {
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "UserData", arg0, arg1)
+
+	outstruct := new(struct {
 		TotalChargeBalance *big.Int
 		TotalTraffic       *big.Int
 	})
-	out := ret
-	err := _TrafficMarket.contract.Call(opts, out, "UserData", arg0, arg1)
-	return *ret, err
+
+	outstruct.TotalChargeBalance = out[0].(*big.Int)
+	outstruct.TotalTraffic = out[1].(*big.Int)
+
+	return *outstruct, err
+
 }
 
 // UserData is a free data retrieval call binding the contract method 0x5a903303.
@@ -315,18 +341,19 @@ func (_TrafficMarket *TrafficMarketCallerSession) UserData(arg0 common.Address, 
 //
 // Solidity: function blockChainSettings() view returns(uint256, uint256, uint256)
 func (_TrafficMarket *TrafficMarketCaller) BlockChainSettings(opts *bind.CallOpts) (*big.Int, *big.Int, *big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-		ret1 = new(*big.Int)
-		ret2 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "blockChainSettings")
+
+	if err != nil {
+		return *new(*big.Int), *new(*big.Int), *new(*big.Int), err
 	}
-	err := _TrafficMarket.contract.Call(opts, out, "blockChainSettings")
-	return *ret0, *ret1, *ret2, err
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out1 := *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+
+	return out0, out1, out2, err
+
 }
 
 // BlockChainSettings is a free data retrieval call binding the contract method 0x01d2eba2.
@@ -347,12 +374,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) BlockChainSettings() (*big.Int
 //
 // Solidity: function decimal() view returns(uint256)
 func (_TrafficMarket *TrafficMarketCaller) Decimal(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "decimal")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "decimal")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // Decimal is a free data retrieval call binding the contract method 0x76809ce3.
@@ -373,12 +405,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) Decimal() (*big.Int, error) {
 //
 // Solidity: function getPoolList() view returns(address[])
 func (_TrafficMarket *TrafficMarketCaller) GetPoolList(opts *bind.CallOpts) ([]common.Address, error) {
-	var (
-		ret0 = new([]common.Address)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "getPoolList")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "getPoolList")
+
+	if err != nil {
+		return *new([]common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
+
+	return out0, err
+
 }
 
 // GetPoolList is a free data retrieval call binding the contract method 0xd41dcbea.
@@ -399,12 +436,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) GetPoolList() ([]common.Addres
 //
 // Solidity: function owner() view returns(address)
 func (_TrafficMarket *TrafficMarketCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "owner")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -425,12 +467,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) Owner() (common.Address, error
 //
 // Solidity: function payerForMiner(address , bytes32 ) view returns(address)
 func (_TrafficMarket *TrafficMarketCaller) PayerForMiner(opts *bind.CallOpts, arg0 common.Address, arg1 [32]byte) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "payerForMiner", arg0, arg1)
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "payerForMiner", arg0, arg1)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // PayerForMiner is a free data retrieval call binding the contract method 0xce53c9bf.
@@ -451,12 +498,17 @@ func (_TrafficMarket *TrafficMarketCallerSession) PayerForMiner(arg0 common.Addr
 //
 // Solidity: function token() view returns(address)
 func (_TrafficMarket *TrafficMarketCaller) Token(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _TrafficMarket.contract.Call(opts, out, "token")
-	return *ret0, err
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "token")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Token is a free data retrieval call binding the contract method 0xfc0c546a.
@@ -477,18 +529,19 @@ func (_TrafficMarket *TrafficMarketCallerSession) Token() (common.Address, error
 //
 // Solidity: function tokenBalance(address userAddr) view returns(uint256, uint256, uint256)
 func (_TrafficMarket *TrafficMarketCaller) TokenBalance(opts *bind.CallOpts, userAddr common.Address) (*big.Int, *big.Int, *big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-		ret1 = new(*big.Int)
-		ret2 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _TrafficMarket.contract.Call(opts, &out, "tokenBalance", userAddr)
+
+	if err != nil {
+		return *new(*big.Int), *new(*big.Int), *new(*big.Int), err
 	}
-	err := _TrafficMarket.contract.Call(opts, out, "tokenBalance", userAddr)
-	return *ret0, *ret1, *ret2, err
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out1 := *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+
+	return out0, out1, out2, err
+
 }
 
 // TokenBalance is a free data retrieval call binding the contract method 0xeedc966a.
@@ -866,6 +919,7 @@ func (_TrafficMarket *TrafficMarketFilterer) ParseCharge(log types.Log) (*Traffi
 	if err := _TrafficMarket.contract.UnpackLog(event, "Charge", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1021,6 +1075,7 @@ func (_TrafficMarket *TrafficMarketFilterer) ParseMinerEvent(log types.Log) (*Tr
 	if err := _TrafficMarket.contract.UnpackLog(event, "MinerEvent", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1177,6 +1232,7 @@ func (_TrafficMarket *TrafficMarketFilterer) ParsePoolClaim(log types.Log) (*Tra
 	if err := _TrafficMarket.contract.UnpackLog(event, "PoolClaim", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1311,6 +1367,7 @@ func (_TrafficMarket *TrafficMarketFilterer) ParsePoolReg(log types.Log) (*Traff
 	if err := _TrafficMarket.contract.UnpackLog(event, "PoolReg", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1443,5 +1500,6 @@ func (_TrafficMarket *TrafficMarketFilterer) ParseSettingsChanged(log types.Log)
 	if err := _TrafficMarket.contract.UnpackLog(event, "SettingsChanged", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
