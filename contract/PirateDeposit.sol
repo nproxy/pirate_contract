@@ -10,6 +10,7 @@ contract PirateDeposit is owned{
     uint private Decimal = 18;
     uint private days20 = 20 days;
     uint256 private minDeposit = 100**Decimal;
+
     IERC20 public token;
     TrafficMarket public market;
     address public coordinator;
@@ -45,26 +46,9 @@ contract PirateDeposit is owned{
         uint256 totalReward;
     }
 
-    event UserDepositEvent(
-        address indexed user,
-        address indexed pool,
-        uint256 tokenNumber,
-        uint256 depositTime
-    );
-
-    event UserWithDrawDepositEvent(
-        address indexed user,
-        address indexed pool,
-        uint256 depositTime
-    );
-
-    event UserDrawRewardEvent(
-        address indexed user,
-        address indexed pool,
-        uint256 reward,
-        uint256 lastRewardTime
-    );
-
+    event UserDepositEvent(address indexed user, address indexed pool, uint256 tokenNumber, uint256 depositTime);
+    event UserWithDrawDepositEvent(address indexed user, address indexed pool, uint256 depositTime);
+    event UserDrawRewardEvent(address indexed user, address indexed pool, uint256 reward, uint256 lastRewardTime);
     event AddRewardEvent(address pool, uint256 rate, uint256 totalReward, uint256 rewardTime);
 
     function changeCoordinator(address coorD) external onlyOwner{
@@ -79,7 +63,7 @@ contract PirateDeposit is owned{
 
     function doUserDeposit(address pool, uint256 tokenNumber,uint256 index) public{
         require(market.LegalPool(pool,index),"pool not found");
-        require(tokenNumber > minDeposit,"token must large than 100" );
+        require(tokenNumber >= minDeposit,"token must large than 100" );
 
         token.transferFrom(msg.sender, address(this), tokenNumber);
 
