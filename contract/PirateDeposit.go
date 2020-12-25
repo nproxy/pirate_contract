@@ -27,7 +27,7 @@ var (
 )
 
 // PirateDepositABI is the input ABI used to generate the binding from.
-const PirateDepositABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"t\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"m\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalReward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rewardTime\",\"type\":\"uint256\"}],\"name\":\"AddRewardEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"profits\",\"type\":\"uint256\"}],\"name\":\"PoolDrawRewardEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenNumber\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositTime\",\"type\":\"uint256\"}],\"name\":\"UserDepositEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lastIndex\",\"type\":\"uint256\"}],\"name\":\"UserDrawRewardEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositTime\",\"type\":\"uint256\"}],\"name\":\"UserWithDrawDepositEvent\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"DepositDatas\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"lastRateIndex\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"DrawRates\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"drawRateTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalReward\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"leftReward\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalReward\",\"type\":\"uint256\"}],\"name\":\"addReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"coorD\",\"type\":\"address\"}],\"name\":\"changeCoordinator\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"d\",\"type\":\"uint256\"}],\"name\":\"changeDepositInterval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"min\",\"type\":\"uint256\"}],\"name\":\"changeMinDeposit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"coordinator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenNumber\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"doUserDeposit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"poolIndex\",\"type\":\"uint256\"}],\"name\":\"drawReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"market\",\"outputs\":[{\"internalType\":\"contractTrafficMarket\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolIndex\",\"type\":\"uint256\"}],\"name\":\"poolDrawReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contractIERC20\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"recordTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"poolIndex\",\"type\":\"uint256\"}],\"name\":\"userWithDrawDeposit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const PirateDepositABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"t\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"m\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalReward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rewardTime\",\"type\":\"uint256\"}],\"name\":\"AddRewardEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"profits\",\"type\":\"uint256\"}],\"name\":\"PoolDrawRewardEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenNumber\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositTime\",\"type\":\"uint256\"}],\"name\":\"UserDepositEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lastIndex\",\"type\":\"uint256\"}],\"name\":\"UserDrawRewardEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositTime\",\"type\":\"uint256\"}],\"name\":\"UserWithDrawDepositEvent\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"Decimal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"DepositDatas\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"lastRateIndex\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"DrawRates\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"drawRateTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalReward\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"leftReward\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalReward\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"drawTime\",\"type\":\"uint256\"}],\"name\":\"addReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"coorD\",\"type\":\"address\"}],\"name\":\"changeCoordinator\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"d\",\"type\":\"uint256\"}],\"name\":\"changeDepositInterval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"min\",\"type\":\"uint256\"}],\"name\":\"changeMinDeposit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"d\",\"type\":\"uint256\"}],\"name\":\"changePoolDrawIntval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"d\",\"type\":\"uint256\"}],\"name\":\"changeRewardInterval\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"coordinator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenNumber\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"doUserDeposit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"poolIndex\",\"type\":\"uint256\"}],\"name\":\"drawReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"market\",\"outputs\":[{\"internalType\":\"contractTrafficMarket\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"minDeposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"minDepositInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"minOneMonth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"poolDrawInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolIndex\",\"type\":\"uint256\"}],\"name\":\"poolDrawReward\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contractIERC20\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"recordTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"poolIndex\",\"type\":\"uint256\"}],\"name\":\"userWithDrawDeposit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // PirateDeposit is an auto generated Go binding around an Ethereum contract.
 type PirateDeposit struct {
@@ -171,6 +171,32 @@ func (_PirateDeposit *PirateDepositTransactorRaw) Transact(opts *bind.TransactOp
 	return _PirateDeposit.Contract.contract.Transact(opts, method, params...)
 }
 
+// Decimal is a free data retrieval call binding the contract method 0x1fe50c39.
+//
+// Solidity: function Decimal() view returns(uint256)
+func (_PirateDeposit *PirateDepositCaller) Decimal(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _PirateDeposit.contract.Call(opts, out, "Decimal")
+	return *ret0, err
+}
+
+// Decimal is a free data retrieval call binding the contract method 0x1fe50c39.
+//
+// Solidity: function Decimal() view returns(uint256)
+func (_PirateDeposit *PirateDepositSession) Decimal() (*big.Int, error) {
+	return _PirateDeposit.Contract.Decimal(&_PirateDeposit.CallOpts)
+}
+
+// Decimal is a free data retrieval call binding the contract method 0x1fe50c39.
+//
+// Solidity: function Decimal() view returns(uint256)
+func (_PirateDeposit *PirateDepositCallerSession) Decimal() (*big.Int, error) {
+	return _PirateDeposit.Contract.Decimal(&_PirateDeposit.CallOpts)
+}
+
 // DepositDatas is a free data retrieval call binding the contract method 0xe1bdb727.
 //
 // Solidity: function DepositDatas(address , address ) view returns(uint256 lastRateIndex)
@@ -293,6 +319,84 @@ func (_PirateDeposit *PirateDepositCallerSession) Market() (common.Address, erro
 	return _PirateDeposit.Contract.Market(&_PirateDeposit.CallOpts)
 }
 
+// MinDeposit is a free data retrieval call binding the contract method 0x41b3d185.
+//
+// Solidity: function minDeposit() view returns(uint256)
+func (_PirateDeposit *PirateDepositCaller) MinDeposit(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _PirateDeposit.contract.Call(opts, out, "minDeposit")
+	return *ret0, err
+}
+
+// MinDeposit is a free data retrieval call binding the contract method 0x41b3d185.
+//
+// Solidity: function minDeposit() view returns(uint256)
+func (_PirateDeposit *PirateDepositSession) MinDeposit() (*big.Int, error) {
+	return _PirateDeposit.Contract.MinDeposit(&_PirateDeposit.CallOpts)
+}
+
+// MinDeposit is a free data retrieval call binding the contract method 0x41b3d185.
+//
+// Solidity: function minDeposit() view returns(uint256)
+func (_PirateDeposit *PirateDepositCallerSession) MinDeposit() (*big.Int, error) {
+	return _PirateDeposit.Contract.MinDeposit(&_PirateDeposit.CallOpts)
+}
+
+// MinDepositInterval is a free data retrieval call binding the contract method 0xd2040687.
+//
+// Solidity: function minDepositInterval() view returns(uint256)
+func (_PirateDeposit *PirateDepositCaller) MinDepositInterval(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _PirateDeposit.contract.Call(opts, out, "minDepositInterval")
+	return *ret0, err
+}
+
+// MinDepositInterval is a free data retrieval call binding the contract method 0xd2040687.
+//
+// Solidity: function minDepositInterval() view returns(uint256)
+func (_PirateDeposit *PirateDepositSession) MinDepositInterval() (*big.Int, error) {
+	return _PirateDeposit.Contract.MinDepositInterval(&_PirateDeposit.CallOpts)
+}
+
+// MinDepositInterval is a free data retrieval call binding the contract method 0xd2040687.
+//
+// Solidity: function minDepositInterval() view returns(uint256)
+func (_PirateDeposit *PirateDepositCallerSession) MinDepositInterval() (*big.Int, error) {
+	return _PirateDeposit.Contract.MinDepositInterval(&_PirateDeposit.CallOpts)
+}
+
+// MinOneMonth is a free data retrieval call binding the contract method 0x3e7754c1.
+//
+// Solidity: function minOneMonth() view returns(uint256)
+func (_PirateDeposit *PirateDepositCaller) MinOneMonth(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _PirateDeposit.contract.Call(opts, out, "minOneMonth")
+	return *ret0, err
+}
+
+// MinOneMonth is a free data retrieval call binding the contract method 0x3e7754c1.
+//
+// Solidity: function minOneMonth() view returns(uint256)
+func (_PirateDeposit *PirateDepositSession) MinOneMonth() (*big.Int, error) {
+	return _PirateDeposit.Contract.MinOneMonth(&_PirateDeposit.CallOpts)
+}
+
+// MinOneMonth is a free data retrieval call binding the contract method 0x3e7754c1.
+//
+// Solidity: function minOneMonth() view returns(uint256)
+func (_PirateDeposit *PirateDepositCallerSession) MinOneMonth() (*big.Int, error) {
+	return _PirateDeposit.Contract.MinOneMonth(&_PirateDeposit.CallOpts)
+}
+
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
@@ -317,6 +421,32 @@ func (_PirateDeposit *PirateDepositSession) Owner() (common.Address, error) {
 // Solidity: function owner() view returns(address)
 func (_PirateDeposit *PirateDepositCallerSession) Owner() (common.Address, error) {
 	return _PirateDeposit.Contract.Owner(&_PirateDeposit.CallOpts)
+}
+
+// PoolDrawInterval is a free data retrieval call binding the contract method 0xb4ec753e.
+//
+// Solidity: function poolDrawInterval() view returns(uint256)
+func (_PirateDeposit *PirateDepositCaller) PoolDrawInterval(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _PirateDeposit.contract.Call(opts, out, "poolDrawInterval")
+	return *ret0, err
+}
+
+// PoolDrawInterval is a free data retrieval call binding the contract method 0xb4ec753e.
+//
+// Solidity: function poolDrawInterval() view returns(uint256)
+func (_PirateDeposit *PirateDepositSession) PoolDrawInterval() (*big.Int, error) {
+	return _PirateDeposit.Contract.PoolDrawInterval(&_PirateDeposit.CallOpts)
+}
+
+// PoolDrawInterval is a free data retrieval call binding the contract method 0xb4ec753e.
+//
+// Solidity: function poolDrawInterval() view returns(uint256)
+func (_PirateDeposit *PirateDepositCallerSession) PoolDrawInterval() (*big.Int, error) {
+	return _PirateDeposit.Contract.PoolDrawInterval(&_PirateDeposit.CallOpts)
 }
 
 // Token is a free data retrieval call binding the contract method 0xfc0c546a.
@@ -345,25 +475,25 @@ func (_PirateDeposit *PirateDepositCallerSession) Token() (common.Address, error
 	return _PirateDeposit.Contract.Token(&_PirateDeposit.CallOpts)
 }
 
-// AddReward is a paid mutator transaction binding the contract method 0x44ea559a.
+// AddReward is a paid mutator transaction binding the contract method 0x70dc5ca5.
 //
-// Solidity: function addReward(address pool, uint256 rate, uint256 totalReward) returns()
-func (_PirateDeposit *PirateDepositTransactor) AddReward(opts *bind.TransactOpts, pool common.Address, rate *big.Int, totalReward *big.Int) (*types.Transaction, error) {
-	return _PirateDeposit.contract.Transact(opts, "addReward", pool, rate, totalReward)
+// Solidity: function addReward(address pool, uint256 rate, uint256 totalReward, uint256 drawTime) returns()
+func (_PirateDeposit *PirateDepositTransactor) AddReward(opts *bind.TransactOpts, pool common.Address, rate *big.Int, totalReward *big.Int, drawTime *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.contract.Transact(opts, "addReward", pool, rate, totalReward, drawTime)
 }
 
-// AddReward is a paid mutator transaction binding the contract method 0x44ea559a.
+// AddReward is a paid mutator transaction binding the contract method 0x70dc5ca5.
 //
-// Solidity: function addReward(address pool, uint256 rate, uint256 totalReward) returns()
-func (_PirateDeposit *PirateDepositSession) AddReward(pool common.Address, rate *big.Int, totalReward *big.Int) (*types.Transaction, error) {
-	return _PirateDeposit.Contract.AddReward(&_PirateDeposit.TransactOpts, pool, rate, totalReward)
+// Solidity: function addReward(address pool, uint256 rate, uint256 totalReward, uint256 drawTime) returns()
+func (_PirateDeposit *PirateDepositSession) AddReward(pool common.Address, rate *big.Int, totalReward *big.Int, drawTime *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.Contract.AddReward(&_PirateDeposit.TransactOpts, pool, rate, totalReward, drawTime)
 }
 
-// AddReward is a paid mutator transaction binding the contract method 0x44ea559a.
+// AddReward is a paid mutator transaction binding the contract method 0x70dc5ca5.
 //
-// Solidity: function addReward(address pool, uint256 rate, uint256 totalReward) returns()
-func (_PirateDeposit *PirateDepositTransactorSession) AddReward(pool common.Address, rate *big.Int, totalReward *big.Int) (*types.Transaction, error) {
-	return _PirateDeposit.Contract.AddReward(&_PirateDeposit.TransactOpts, pool, rate, totalReward)
+// Solidity: function addReward(address pool, uint256 rate, uint256 totalReward, uint256 drawTime) returns()
+func (_PirateDeposit *PirateDepositTransactorSession) AddReward(pool common.Address, rate *big.Int, totalReward *big.Int, drawTime *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.Contract.AddReward(&_PirateDeposit.TransactOpts, pool, rate, totalReward, drawTime)
 }
 
 // ChangeCoordinator is a paid mutator transaction binding the contract method 0x86ab2395.
@@ -427,6 +557,48 @@ func (_PirateDeposit *PirateDepositSession) ChangeMinDeposit(min *big.Int) (*typ
 // Solidity: function changeMinDeposit(uint256 min) returns()
 func (_PirateDeposit *PirateDepositTransactorSession) ChangeMinDeposit(min *big.Int) (*types.Transaction, error) {
 	return _PirateDeposit.Contract.ChangeMinDeposit(&_PirateDeposit.TransactOpts, min)
+}
+
+// ChangePoolDrawIntval is a paid mutator transaction binding the contract method 0xf0f605eb.
+//
+// Solidity: function changePoolDrawIntval(uint256 d) returns()
+func (_PirateDeposit *PirateDepositTransactor) ChangePoolDrawIntval(opts *bind.TransactOpts, d *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.contract.Transact(opts, "changePoolDrawIntval", d)
+}
+
+// ChangePoolDrawIntval is a paid mutator transaction binding the contract method 0xf0f605eb.
+//
+// Solidity: function changePoolDrawIntval(uint256 d) returns()
+func (_PirateDeposit *PirateDepositSession) ChangePoolDrawIntval(d *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.Contract.ChangePoolDrawIntval(&_PirateDeposit.TransactOpts, d)
+}
+
+// ChangePoolDrawIntval is a paid mutator transaction binding the contract method 0xf0f605eb.
+//
+// Solidity: function changePoolDrawIntval(uint256 d) returns()
+func (_PirateDeposit *PirateDepositTransactorSession) ChangePoolDrawIntval(d *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.Contract.ChangePoolDrawIntval(&_PirateDeposit.TransactOpts, d)
+}
+
+// ChangeRewardInterval is a paid mutator transaction binding the contract method 0x61ea2392.
+//
+// Solidity: function changeRewardInterval(uint256 d) returns()
+func (_PirateDeposit *PirateDepositTransactor) ChangeRewardInterval(opts *bind.TransactOpts, d *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.contract.Transact(opts, "changeRewardInterval", d)
+}
+
+// ChangeRewardInterval is a paid mutator transaction binding the contract method 0x61ea2392.
+//
+// Solidity: function changeRewardInterval(uint256 d) returns()
+func (_PirateDeposit *PirateDepositSession) ChangeRewardInterval(d *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.Contract.ChangeRewardInterval(&_PirateDeposit.TransactOpts, d)
+}
+
+// ChangeRewardInterval is a paid mutator transaction binding the contract method 0x61ea2392.
+//
+// Solidity: function changeRewardInterval(uint256 d) returns()
+func (_PirateDeposit *PirateDepositTransactorSession) ChangeRewardInterval(d *big.Int) (*types.Transaction, error) {
+	return _PirateDeposit.Contract.ChangeRewardInterval(&_PirateDeposit.TransactOpts, d)
 }
 
 // DoUserDeposit is a paid mutator transaction binding the contract method 0x67cf3e8f.

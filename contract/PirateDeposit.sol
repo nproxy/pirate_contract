@@ -7,11 +7,11 @@ import "./TrafficMarket.sol";
 contract PirateDeposit is owned{
     using SafeMath for uint256;
 
-    uint private Decimal = 18;
-    uint private minDepositInterval = 20 days;
-    uint private poolDrawInterval = 50 days;
-    uint private minOneMonth = 28 days;
-    uint256 private minDeposit = 100**Decimal;
+    uint public Decimal = 18;
+    uint public minDepositInterval = 20 days;
+    uint public poolDrawInterval = 50 days;
+    uint public minOneMonth = 28 days;
+    uint256 public minDeposit = 100**Decimal;
 
     IERC20 public token;
     TrafficMarket public market;
@@ -64,6 +64,16 @@ contract PirateDeposit is owned{
     function changeMinDeposit(uint256 min) public mustCoordinator{
         minDeposit = min;
     }
+
+    function changePoolDrawIntval(uint d) public mustCoordinator{
+        require(d > 31,"must large than one month");
+        poolDrawInterval = d *  (1 days);
+    }
+
+    function changeRewardInterval(uint d) public mustCoordinator{
+        minOneMonth = d * (1 days);
+    }
+
 
     function doUserDeposit(address pool, uint256 tokenNumber,uint256 index) public{
         require(market.LegalPool(pool,index),"pool not found");
