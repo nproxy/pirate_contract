@@ -92,19 +92,18 @@ contract PirateDeposit is owned{
         emit UserWithDrawDepositEvent(msg.sender,pool,recordTime);
     }
 
-    function addReward(address pool, uint256 rate, uint256 totalReward) public mustCoordinator{
+    function addReward(address pool, uint256 rate, uint256 totalReward, uint256 drawTime) public mustCoordinator{
         if (DrawRates[pool].length > 0){
-            if ((now - DrawRates[pool][DrawRates[pool].length-1].drawRateTime) < (minOneMonth)){
+            if ((drawTime - DrawRates[pool][DrawRates[pool].length-1].drawRateTime) < (minOneMonth)){
                 revert("must large than one month");
             }
         }
 
         token.transferFrom(msg.sender,address(this),totalReward);
 
-        uint256 NowTime = now;
-        DrawRates[pool].push(drawRate(rate,NowTime, totalReward,totalReward));
+        DrawRates[pool].push(drawRate(rate,drawTime, totalReward,totalReward));
 
-        emit AddRewardEvent(pool,rate,totalReward,NowTime);
+        emit AddRewardEvent(pool,rate,totalReward,drawTime);
     }
 
     function drawReward(address pool, uint256 poolIndex) public {
