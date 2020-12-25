@@ -8,7 +8,8 @@ contract PirateDeposit is owned{
     using SafeMath for uint256;
 
     uint private Decimal = 18;
-    uint private days20 = 20 days;
+    uint private minDepositInterval = 20 days;
+    uint private poolDrawInterval = 50 days;
     uint256 private minDeposit = 100**Decimal;
 
     IERC20 public token;
@@ -37,25 +38,27 @@ contract PirateDeposit is owned{
 
     struct userDeposits{
         userDeposit[] uds;
-        uint256 lastDrawRateTime;
+        uint256 lastRateIndex;
     }
 
     struct drawRate{
         uint256 rate;
         uint256 drawRateTime;
         uint256 totalReward;
+        uint256 leftReward;
     }
 
     event UserDepositEvent(address indexed user, address indexed pool, uint256 tokenNumber, uint256 depositTime);
     event UserWithDrawDepositEvent(address indexed user, address indexed pool, uint256 depositTime);
-    event UserDrawRewardEvent(address indexed user, address indexed pool, uint256 reward, uint256 lastRewardTime);
+    event UserDrawRewardEvent(address indexed user, address indexed pool, uint256 reward, uint256 lastIndex);
     event AddRewardEvent(address pool, uint256 rate, uint256 totalReward, uint256 rewardTime);
+    event PoolDrawRewardEvent(address pool, uint256 profits);
 
     function changeCoordinator(address coorD) external onlyOwner{
         coordinator = coorD;
     }
     function changeDepositInterval(uint d) public mustCoordinator{
-        days20 = d * (1 days);
+        minDepositInterval = d * (1 days);
     }
     function changeMinDeposit(uint256 min) public mustCoordinator{
         minDeposit = min;
@@ -94,8 +97,11 @@ contract PirateDeposit is owned{
                 revert("must large than one month");
             }
         }
+
+        token.transferFrom(msg.sender,address(this),totalReward);
+
         uint256 NowTime = now;
-        DrawRates[pool].push(drawRate(rate,NowTime, totalReward));
+        DrawRates[pool].push(drawRate(rate,NowTime, totalReward,totalReward));
 
         emit AddRewardEvent(pool,rate,totalReward,NowTime);
     }
@@ -105,23 +111,20 @@ contract PirateDeposit is owned{
         userDeposits memory uds = DepositDatas[pool][msg.sender];
         require(DrawRates[pool].length > 0, "no withdraw reward rate");
         require(uds.uds.length >0, "no deposit");
-        require((uds.lastDrawRateTime + (28 days)) <=  DrawRates[pool][DrawRates[pool].length-1].drawRateTime, "no reward for withdraw");
+        require(uds.lastRateIndex < DrawRates[pool].length-1, "no reward for withdraw");
 
         uint256 sumDs = 0;
 
-        for(uint256 i=0;i<DrawRates[pool].length; i++){
-            if (uds.lastDrawRateTime > DrawRates[pool][i].drawRateTime){
-                continue;
-            }
-
+        for(uint256 i=uds.lastRateIndex.add(1);i<DrawRates[pool].length; i++){
             uint256 sumT = 0;
             for(uint256 j=0;j<uds.uds.length;j++){
-                if (DrawRates[pool][i].drawRateTime - uds.uds[j].depositTime > days20){
-                    sumT += uds.uds[j].totalDeposit;
+                if (DrawRates[pool][i].drawRateTime - uds.uds[j].depositTime > minDepositInterval){
+                    sumT.add(uds.uds[j].totalDeposit);
                 }
             }
             if (sumT > 0){
-                sumDs += sumT*DrawRates[pool][i].rate;
+                sumDs.add(sumT*DrawRates[pool][i].rate);
+                DrawRates[pool][i].leftReward.sub(sumT);
             }
         }
 
@@ -129,8 +132,25 @@ contract PirateDeposit is owned{
             token.transfer(msg.sender, sumDs);
         }
 
-        DepositDatas[pool][msg.sender].lastDrawRateTime = DrawRates[pool][DrawRates[pool].length-1].drawRateTime;
+        DepositDatas[pool][msg.sender].lastRateIndex = DrawRates[pool].length-1;
+//        DrawRates[pool][msg.sender].leftReward.sub(sumDs);
 
-        emit UserDrawRewardEvent(msg.sender, pool, sumDs, DepositDatas[pool][msg.sender].lastDrawRateTime);
+        emit UserDrawRewardEvent(msg.sender, pool, sumDs, DepositDatas[pool][msg.sender].lastRateIndex);
     }
+
+    function poolDrawReward(uint256 poolIndex) public{
+        require(market.LegalPool(msg.sender,poolIndex),"pool not found");
+        require(now > (DrawRates[msg.sender][DrawRates[msg.sender].length-1].drawRateTime + poolDrawInterval), "pool draw profit error");
+
+        uint256 sumDs = 0;
+        for(uint256 i=0;i<DrawRates[msg.sender].length;i++){
+            sumDs.add(DrawRates[msg.sender][i].leftReward);
+        }
+
+        if (sumDs > 0){
+            token.transfer(msg.sender, sumDs);
+        }
+        emit PoolDrawRewardEvent(msg.sender, sumDs);
+    }
+
 }
