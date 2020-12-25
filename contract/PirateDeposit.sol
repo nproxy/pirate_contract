@@ -10,6 +10,7 @@ contract PirateDeposit is owned{
     uint private Decimal = 18;
     uint private minDepositInterval = 20 days;
     uint private poolDrawInterval = 50 days;
+    uint private minOneMonth = 28 days;
     uint256 private minDeposit = 100**Decimal;
 
     IERC20 public token;
@@ -93,7 +94,7 @@ contract PirateDeposit is owned{
 
     function addReward(address pool, uint256 rate, uint256 totalReward) public mustCoordinator{
         if (DrawRates[pool].length > 0){
-            if ((now - DrawRates[pool][DrawRates[pool].length-1].drawRateTime) < (28 days)){
+            if ((now - DrawRates[pool][DrawRates[pool].length-1].drawRateTime) < (minOneMonth)){
                 revert("must large than one month");
             }
         }
