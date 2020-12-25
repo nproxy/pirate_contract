@@ -27,9 +27,9 @@ contract PirateDeposit is owned{
         market = TrafficMarket(m);
         coordinator =  msg.sender;
     }
-    //pool                user
+          //pool             user
     mapping(address=>mapping(address=>userDeposits)) public DepositDatas;
-    //pool
+          //pool
     mapping(address=>drawRate[]) public DrawRates;
 
     struct userDeposit{
@@ -125,7 +125,7 @@ contract PirateDeposit is owned{
 
         uint256 sumDs = 0;
 
-        for(uint256 i=uds.lastRateIndex.add(1);i<DrawRates[pool].length; i++){
+        for(uint256 i=uds.lastRateIndex+1;i<DrawRates[pool].length; i++){
             uint256 sumT = 0;
             for(uint256 j=0;j<uds.uds.length;j++){
                 if (DrawRates[pool][i].drawRateTime - uds.uds[j].depositTime > minDepositInterval){
@@ -143,7 +143,6 @@ contract PirateDeposit is owned{
         }
 
         DepositDatas[pool][msg.sender].lastRateIndex = DrawRates[pool].length-1;
-//        DrawRates[pool][msg.sender].leftReward.sub(sumDs);
 
         emit UserDrawRewardEvent(msg.sender, pool, sumDs, DepositDatas[pool][msg.sender].lastRateIndex);
     }
