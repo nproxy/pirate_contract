@@ -146,6 +146,7 @@ contract PirateDeposit is owned{
         uint256 sumDs = 0;
         for(uint256 i=0;i<DrawRates[msg.sender].length;i++){
             sumDs.add(DrawRates[msg.sender][i].leftReward);
+            DrawRates[msg.sender][i].leftReward = 0;
         }
 
         if (sumDs > 0){
