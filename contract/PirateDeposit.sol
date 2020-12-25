@@ -8,6 +8,7 @@ contract PirateDeposit is owned{
     using SafeMath for uint256;
 
     uint public Decimal = 18;
+    uint public rateDecimal = 10;
     uint public minDepositInterval = 20 days;
     uint public poolDrawInterval = 50 days;
     uint public minOneMonth = 28 days;
@@ -74,6 +75,10 @@ contract PirateDeposit is owned{
         minOneMonth = d * (1 days);
     }
 
+    function changeRateDecimal(uint d) public mustCoordinator{
+        rateDecimal = d;
+    }
+
 
     function doUserDeposit(address pool, uint256 tokenNumber,uint256 index) public{
         require(market.LegalPool(pool,index),"pool not found");
@@ -133,7 +138,7 @@ contract PirateDeposit is owned{
                 }
             }
             if (sumT > 0){
-                sumDs.add(sumT*DrawRates[pool][i].rate);
+                sumDs.add(sumT*DrawRates[pool][i].rate/rateDecimal);
                 DrawRates[pool][i].leftReward.sub(sumT);
             }
         }
