@@ -4,7 +4,7 @@ SHELL=PATH='$(PATH)' /bin/sh
 all:
 	abigen --abi TrafficMarket.abi --pkg contract --type TrafficMarket --out TrafficMarket.go
 	abigen --abi PirateDeposit.abi --pkg contract --type PirateDeposit --out PirateDeposit.go
-	abigen --abi hyperorchidprotocol.abi --pkg contract --type Token --out Token.go
+	abigen --abi HyperOrchidProtocol.abi --pkg contract --type Token --out Token.go
 	#abigen --abi ExtendToken.abi --pkg contract --type ExtendToken --out ExtendToken.go
 	abigen --abi ApplyToken.abi --pkg contract --type ApplyToken --out ApplyToken.go
 	abigen --abi HopShop.abi --pkg contract --type HopShop --out HopShop.go
