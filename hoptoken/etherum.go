@@ -65,6 +65,7 @@ func TransferEth(target string, tokenNo float64, privateKey *ecdsa.PrivateKey) (
 	return signedTx.Hash().Hex(), nil
 }
 
+
 func TxStatus(tx common.Hash) bool {
 
 	client, err := config.SysEthConfig.NewEthClient()
