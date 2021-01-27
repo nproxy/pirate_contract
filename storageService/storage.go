@@ -20,6 +20,10 @@ var (
 	lastTime int64
 )
 
+func ClearCacheSetting()  {
+	pes = nil
+}
+
 func getPirateEthSettings() (*cabinet.PirateEthSetting, error) {
 	mc, err := config.SysEthConfig.NewClient()
 	if err != nil {
