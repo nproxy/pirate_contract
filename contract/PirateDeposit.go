@@ -137,7 +137,7 @@ func bindPirateDeposit(address common.Address, caller bind.ContractCaller, trans
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_PirateDeposit *PirateDepositRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_PirateDeposit *PirateDepositRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _PirateDeposit.Contract.PirateDepositCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_PirateDeposit *PirateDepositRaw) Transact(opts *bind.TransactOpts, method
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_PirateDeposit *PirateDepositCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_PirateDeposit *PirateDepositCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _PirateDeposit.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +175,17 @@ func (_PirateDeposit *PirateDepositTransactorRaw) Transact(opts *bind.TransactOp
 //
 // Solidity: function Decimal() view returns(uint256)
 func (_PirateDeposit *PirateDepositCaller) Decimal(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "Decimal")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "Decimal")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // Decimal is a free data retrieval call binding the contract method 0x1fe50c39.
@@ -201,12 +206,17 @@ func (_PirateDeposit *PirateDepositCallerSession) Decimal() (*big.Int, error) {
 //
 // Solidity: function DepositDatas(address , address ) view returns(uint256 lastRateIndex)
 func (_PirateDeposit *PirateDepositCaller) DepositDatas(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "DepositDatas", arg0, arg1)
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "DepositDatas", arg0, arg1)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // DepositDatas is a free data retrieval call binding the contract method 0xe1bdb727.
@@ -232,15 +242,26 @@ func (_PirateDeposit *PirateDepositCaller) DrawRates(opts *bind.CallOpts, arg0 c
 	TotalReward  *big.Int
 	LeftReward   *big.Int
 }, error) {
-	ret := new(struct {
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "DrawRates", arg0, arg1)
+
+	outstruct := new(struct {
 		Rate         *big.Int
 		DrawRateTime *big.Int
 		TotalReward  *big.Int
 		LeftReward   *big.Int
 	})
-	out := ret
-	err := _PirateDeposit.contract.Call(opts, out, "DrawRates", arg0, arg1)
-	return *ret, err
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.Rate = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.DrawRateTime = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.TotalReward = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	outstruct.LeftReward = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+
+	return *outstruct, err
+
 }
 
 // DrawRates is a free data retrieval call binding the contract method 0x759e7f8a.
@@ -271,12 +292,17 @@ func (_PirateDeposit *PirateDepositCallerSession) DrawRates(arg0 common.Address,
 //
 // Solidity: function coordinator() view returns(address)
 func (_PirateDeposit *PirateDepositCaller) Coordinator(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "coordinator")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "coordinator")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Coordinator is a free data retrieval call binding the contract method 0x0a009097.
@@ -297,12 +323,17 @@ func (_PirateDeposit *PirateDepositCallerSession) Coordinator() (common.Address,
 //
 // Solidity: function market() view returns(address)
 func (_PirateDeposit *PirateDepositCaller) Market(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "market")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "market")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Market is a free data retrieval call binding the contract method 0x80f55605.
@@ -323,12 +354,17 @@ func (_PirateDeposit *PirateDepositCallerSession) Market() (common.Address, erro
 //
 // Solidity: function minDeposit() view returns(uint256)
 func (_PirateDeposit *PirateDepositCaller) MinDeposit(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "minDeposit")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "minDeposit")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // MinDeposit is a free data retrieval call binding the contract method 0x41b3d185.
@@ -349,12 +385,17 @@ func (_PirateDeposit *PirateDepositCallerSession) MinDeposit() (*big.Int, error)
 //
 // Solidity: function minDepositInterval() view returns(uint256)
 func (_PirateDeposit *PirateDepositCaller) MinDepositInterval(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "minDepositInterval")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "minDepositInterval")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // MinDepositInterval is a free data retrieval call binding the contract method 0xd2040687.
@@ -375,12 +416,17 @@ func (_PirateDeposit *PirateDepositCallerSession) MinDepositInterval() (*big.Int
 //
 // Solidity: function minOneMonth() view returns(uint256)
 func (_PirateDeposit *PirateDepositCaller) MinOneMonth(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "minOneMonth")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "minOneMonth")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // MinOneMonth is a free data retrieval call binding the contract method 0x3e7754c1.
@@ -401,12 +447,17 @@ func (_PirateDeposit *PirateDepositCallerSession) MinOneMonth() (*big.Int, error
 //
 // Solidity: function owner() view returns(address)
 func (_PirateDeposit *PirateDepositCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "owner")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -427,12 +478,17 @@ func (_PirateDeposit *PirateDepositCallerSession) Owner() (common.Address, error
 //
 // Solidity: function poolDrawInterval() view returns(uint256)
 func (_PirateDeposit *PirateDepositCaller) PoolDrawInterval(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "poolDrawInterval")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "poolDrawInterval")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // PoolDrawInterval is a free data retrieval call binding the contract method 0xb4ec753e.
@@ -453,12 +509,17 @@ func (_PirateDeposit *PirateDepositCallerSession) PoolDrawInterval() (*big.Int, 
 //
 // Solidity: function rateDecimal() view returns(uint256)
 func (_PirateDeposit *PirateDepositCaller) RateDecimal(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "rateDecimal")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "rateDecimal")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // RateDecimal is a free data retrieval call binding the contract method 0x31809c7e.
@@ -479,12 +540,17 @@ func (_PirateDeposit *PirateDepositCallerSession) RateDecimal() (*big.Int, error
 //
 // Solidity: function token() view returns(address)
 func (_PirateDeposit *PirateDepositCaller) Token(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _PirateDeposit.contract.Call(opts, out, "token")
-	return *ret0, err
+	var out []interface{}
+	err := _PirateDeposit.contract.Call(opts, &out, "token")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Token is a free data retrieval call binding the contract method 0xfc0c546a.
@@ -886,6 +952,7 @@ func (_PirateDeposit *PirateDepositFilterer) ParseAddRewardEvent(log types.Log) 
 	if err := _PirateDeposit.contract.UnpackLog(event, "AddRewardEvent", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1020,6 +1087,7 @@ func (_PirateDeposit *PirateDepositFilterer) ParsePoolDrawRewardEvent(log types.
 	if err := _PirateDeposit.contract.UnpackLog(event, "PoolDrawRewardEvent", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1174,6 +1242,7 @@ func (_PirateDeposit *PirateDepositFilterer) ParseUserDepositEvent(log types.Log
 	if err := _PirateDeposit.contract.UnpackLog(event, "UserDepositEvent", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1328,6 +1397,7 @@ func (_PirateDeposit *PirateDepositFilterer) ParseUserDrawRewardEvent(log types.
 	if err := _PirateDeposit.contract.UnpackLog(event, "UserDrawRewardEvent", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }
 
@@ -1481,5 +1551,6 @@ func (_PirateDeposit *PirateDepositFilterer) ParseUserWithDrawDepositEvent(log t
 	if err := _PirateDeposit.contract.UnpackLog(event, "UserWithDrawDepositEvent", log); err != nil {
 		return nil, err
 	}
+	event.Raw = log
 	return event, nil
 }

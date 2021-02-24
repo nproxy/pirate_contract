@@ -215,7 +215,8 @@ func watchUserCharge(batch *chan *LogServiceItem) error {
 
 	sub, e := mc.WatchCharge(nil, c, nil, nil)
 	if e != nil {
-		return err
+		fmt.Println("!!!!!!!!!!!!!!!!!!!!!watch user charge failed!!!!!!!!!!!!!!!!!!!!!!!=====================")
+		return e
 	}
 	for {
 		select {
