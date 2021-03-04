@@ -63,9 +63,14 @@ func GetUserChargeCount() int {
 
 	cnt:=0
 
+	u:=make(map[common.Address]struct{})
+
 	for _,pooluser:=range usersInPool.users{
-		for range pooluser{
-			cnt ++
+		for k,_:=range pooluser{
+			if _,ok:=u[k];!ok{
+				cnt ++
+				u[k] = struct{}{}
+			}
 		}
 	}
 
