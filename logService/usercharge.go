@@ -57,6 +57,22 @@ func GetUserList(pool common.Address) ([]common.Address, error) {
 	return uas, nil
 }
 
+func GetUserChargeCount() int {
+	usersInPool.lock.Lock()
+	defer usersInPool.lock.Unlock()
+
+	cnt:=0
+
+	for _,pooluser:=range usersInPool.users{
+		for range pooluser{
+			cnt ++
+		}
+	}
+
+	return cnt
+
+}
+
 func GetSubPools(user common.Address) []common.Address {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
