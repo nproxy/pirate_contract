@@ -1,6 +1,7 @@
 package trafficmarket
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -21,7 +22,19 @@ func Charge(userAddr, poolAddr common.Address, no float64, priKey *ecdsa.Private
 
 	fmt.Println(config.SysEthConfig.String())
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil, err
+	}
 
 	var index int
 	index, err = storageService.GetPoolIndex(poolAddr)

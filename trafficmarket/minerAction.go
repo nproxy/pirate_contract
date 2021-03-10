@@ -1,6 +1,7 @@
 package trafficmarket
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -18,7 +19,20 @@ func JoinPool(poolAddr common.Address, subAddr [32]byte, priKey *ecdsa.PrivateKe
 	}
 	defer mc.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
 	var index int
 	index, err = storageService.GetPoolIndex(poolAddr)
 	if err != nil {
@@ -42,7 +56,19 @@ func ChangePool(from, to common.Address, subAddr [32]byte, priKey *ecdsa.Private
 	}
 	defer mc.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
 
 	tx, err := mc.ChangePool(transactor, from, to, subAddr)
 
@@ -61,7 +87,20 @@ func RetireFromPool(from common.Address, subAddr [32]byte, priKey *ecdsa.Private
 	}
 	defer mc.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
 
 	tx, err := mc.RetireFromPool(transactor, from, subAddr)
 

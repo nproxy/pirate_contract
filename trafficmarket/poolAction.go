@@ -1,6 +1,7 @@
 package trafficmarket
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -19,7 +20,19 @@ func RegPool(priKey *ecdsa.PrivateKey) *types.Transaction {
 	}
 	defer mc.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
 
 	tx, err := mc.RegPool(transactor)
 
@@ -38,7 +51,20 @@ func DestroyPool(poolAddr common.Address, priKey *ecdsa.PrivateKey) *types.Trans
 	}
 	defer mc.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
 
 	var index int
 	index, err = storageService.GetPoolIndex(poolAddr)
@@ -63,7 +89,20 @@ func PClaim(userAddr, poolAddr common.Address, credit, amount, cn *big.Int, sig 
 	}
 	defer mc.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+	var nid *big.Int
+	nid,err = mc.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil
+	}
+
 
 	tx, err := mc.Pclaim(transactor, userAddr, poolAddr, credit, amount, cn, sig)
 

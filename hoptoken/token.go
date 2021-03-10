@@ -1,6 +1,7 @@
 package hoptoken
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -52,12 +53,25 @@ func TransferERCToken(target string, tokenNo float64, key *ecdsa.PrivateKey) (st
 	}
 	defer t.Close()
 
-	opts := bind.NewKeyedTransactor(key)
+	var nid *big.Int
+	nid,err = t.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return "", err
+	}
+
+	var transactOpts *bind.TransactOpts
+	transactOpts,err = bind.NewKeyedTransactorWithChainID(key,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return "", err
+	}
+
 	val := util.BalanceEth(tokenNo)
 
 	fmt.Printf("\n----->%.2f", util.BalanceHuman(val))
 
-	tx, err := t.Transfer(opts, common.HexToAddress(target), val)
+	tx, err := t.Transfer(transactOpts, common.HexToAddress(target), val)
 	if err != nil {
 		fmt.Println("[TransferERCToken]: Transfer err:", err.Error())
 		return "", err
@@ -76,7 +90,21 @@ func Approve(no float64, tokenAddr, spender common.Address, priKey *ecdsa.Privat
 
 	defer client.Close()
 
-	transactor := bind.NewKeyedTransactor(priKey)
+
+	var nid *big.Int
+	nid,err = client.GetClient().ChainID(context.TODO())
+	if err!=nil{
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var transactor *bind.TransactOpts
+	transactor,err = bind.NewKeyedTransactorWithChainID(priKey,nid)
+	if err!=nil{
+		fmt.Println(err)
+		return nil, err
+	}
+
 
 	tokenNo := util.BalanceEth(no)
 

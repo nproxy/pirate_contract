@@ -5,6 +5,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract/contract"
+	"context"
+	"math/big"
 	"path"
 	"strings"
 )
@@ -167,6 +169,11 @@ func (tc *TokenClient) Close() {
 	tc.client = nil
 
 }
+
+func (tc *TokenClient)GetChainId() (*big.Int,error)  {
+	return tc.client.ChainID(context.TODO())
+}
+
 
 func test(user common.Address) {
 	mc, _ := SysEthConfig.NewClient()
