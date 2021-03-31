@@ -153,7 +153,9 @@ func (ls *LogService) Start() {
 
 	for _, v := range ls.logService {
 		if v.recover != nil {
-			v.recover()
+			if err:=v.recover();err!=nil{
+				panic("LogService Start() "+v.name+" ==>"+err.Error())
+			}
 		}
 	}
 
@@ -189,6 +191,7 @@ func (ls *LogService) Start() {
 						panic("can't create eth client")
 					}
 				}
+
 				for _, v := range ls.logService {
 					if v.CurBlockNum != nil {
 						v.CurBlockNum(n)

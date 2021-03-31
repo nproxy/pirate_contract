@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract/cabinet"
 	"github.com/hyperorchidlab/pirate_contract/contract"
 	"github.com/hyperorchidlab/pirate_contract/util"
@@ -18,6 +19,7 @@ import (
 
 type UserChargeHistory struct {
 	BlockPos
+	BlockTime 	  int64		`json:"block_time,omitempty"`
 	TokenAmount   *big.Int `json:"token_amount"`
 	TrafficAmount *big.Int `json:"traffic_amount"`
 }
@@ -111,7 +113,9 @@ func GetUserData(pool, user common.Address) *cabinet.PirateEthUserData {
 
 }
 
-var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int, trafficAmount *big.Int) error
+var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int, lastAmount *big.Int,firstTime bool,chargeTime int64) error
+
+var RecoverChargeNotify func(user common.Address,pool common.Address,tokenAmount *big.Int, lastAmout *big.Int, firstTime bool,chargeTime int64) error
 
 var userChargeKeyHead = "user_charge_"
 var userChargeKey = userChargeKeyHead + "%s_%s_%d_%d"
@@ -135,9 +139,12 @@ func userChargeKey2Address(key []byte) (pool, user common.Address, err error) {
 	return
 }
 
-func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int) bool {
+func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int,nowtime int64) (bool,bool,*big.Int) {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
+
+	var firstTime bool
+	lastAmount := &big.Int{}
 
 	v, ok := usersInPool.users[pool]
 	if !ok {
@@ -151,8 +158,13 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 
 	for _, history := range v[user].History {
 		if history.BlockNumber == l.BlockNumber && history.TxIndex == l.TxIndex {
-			return false
+			return false,false,lastAmount
 		}
+	}
+	lastAmount = v[user].TokenAmount
+
+	if len(v[user].History) == 0{
+		firstTime = true
 	}
 
 	fmt.Println("add user-----", v[user].TrafficAmount.String(), v[user].TokenAmount.String(), tokenAmount.String(), trafficAmount.String())
@@ -163,7 +175,7 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	fmt.Println("UserCharge: ", pool.String(), user.String(), v[user].TokenAmount, v[user].TrafficAmount)
 
 	uc := v[user]
-	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount}
+	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount,BlockTime: nowtime}
 
 	uc.History = append(uc.History, h)
 
@@ -174,16 +186,35 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 
 	GetLogConf().Save([]byte(key), dbv)
 
-	return true
+	return true,firstTime,lastAmount
 }
 
-func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int) {
+func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int,nowTime int64) {
 
-	n := _addNewUserChargeHistory(pool, user, l, tokenAmount, trafficAmount)
+	n,firstTimne,lastAmount := _addNewUserChargeHistory(pool, user, l, tokenAmount, trafficAmount,nowTime)
 
 	if n && UserChargeNotify != nil {
 		fmt.Println("UserCharge Notify:", pool.String(), user.String(), tokenAmount.String(), trafficAmount.String())
-		UserChargeNotify(user, pool, tokenAmount, trafficAmount)
+		UserChargeNotify(user, pool, tokenAmount, lastAmount,firstTimne,nowTime)
+	}
+}
+
+func getBlockTime(c *ethclient.Client,hash common.Hash) int64  {
+	if blk,err:= c.BlockByHash(context.TODO(),hash);err!=nil{
+		return 0
+	}else{
+		return int64(blk.Time())
+	}
+}
+
+func getBlockTime2(c *ethclient.Client, num uint64) int64  {
+	bignum := &big.Int{}
+	bignum.SetUint64(num)
+
+	if blk,err:=c.BlockByNumber(context.TODO(),bignum);err!=nil{
+		return 0
+	}else{
+		return int64(blk.Time())
 	}
 }
 
@@ -216,7 +247,8 @@ func batchUserCharge() error {
 
 	for iter.Next() {
 		ev := iter.Event
-		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount, ev.TrafficAmount)
+		nowtime:=getBlockTime(mc.GetClient(),iter.Event.Raw.BlockHash)
+		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount, ev.TrafficAmount,nowtime)
 		userChargeEvent.LastMax(ev.Raw)
 	}
 
@@ -254,10 +286,16 @@ func watchUserCharge(batch *chan *LogServiceItem) error {
 
 func recoverUserCharge() error {
 	alluc := GetLogConf().BatchGet([]byte(userChargeKeyHead), []byte(userChargeKeyPatternEnd))
+	c,err:=GetLogConf().cfg.NewEthClient()
+	if err!=nil{
+		return err
+	}
+	defer c.Close()
 
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 	for i := 0; i < len(alluc); i++ {
+		lastAmount := &big.Int{}
 		uc := alluc[i]
 		fmt.Println("UserCharge: Recover from Db", string(uc.key), string(uc.vaule))
 		pool, user, err := userChargeKey2Address(uc.key)
@@ -274,8 +312,17 @@ func recoverUserCharge() error {
 		if !ok {
 			v[user] = &UserCharge{User: user, TokenAmount: &big.Int{}, TrafficAmount: &big.Int{}}
 		}
+		lastAmount = v[user].TokenAmount
 		dbv := &UserChargeHistory{}
 		json.Unmarshal(uc.vaule, dbv)
+
+		if dbv.BlockTime == 0{
+			dbv.BlockTime = getBlockTime2(c,dbv.BlockNumber)
+			if dbv.BlockTime > 0{
+				data,_:=json.Marshal(dbv)
+				GetLogConf().Save(uc.key,data)
+			}
+		}
 
 		found := false
 
@@ -287,6 +334,15 @@ func recoverUserCharge() error {
 		}
 		if found {
 			continue
+		}
+
+		firstTime := false
+		if len(v[user].History) == 0{
+			firstTime = true
+		}
+
+		if RecoverChargeNotify != nil{
+			RecoverChargeNotify(user,pool,dbv.TokenAmount,lastAmount,firstTime,dbv.BlockTime)
 		}
 
 		muc := v[user]

@@ -5,7 +5,12 @@ import (
 	"math"
 	"math/big"
 	"strconv"
+	"time"
 )
+
+func GetNowMsTime() int64 {
+	return time.Now().UnixNano() / 1e6
+}
 
 func BalanceHuman(balance *big.Int) float64 {
 	fbalance := new(big.Float)
