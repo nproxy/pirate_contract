@@ -295,7 +295,7 @@ func recoverUserCharge() error {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 	for i := 0; i < len(alluc); i++ {
-		lastAmount := &big.Int{}
+
 		uc := alluc[i]
 		fmt.Println("UserCharge: Recover from Db", string(uc.key), string(uc.vaule))
 		pool, user, err := userChargeKey2Address(uc.key)
@@ -312,7 +312,7 @@ func recoverUserCharge() error {
 		if !ok {
 			v[user] = &UserCharge{User: user, TokenAmount: &big.Int{}, TrafficAmount: &big.Int{}}
 		}
-		lastAmount = v[user].TokenAmount
+
 		dbv := &UserChargeHistory{}
 		json.Unmarshal(uc.vaule, dbv)
 
@@ -336,13 +336,9 @@ func recoverUserCharge() error {
 			continue
 		}
 
-		firstTime := false
-		if len(v[user].History) == 0{
-			firstTime = true
-		}
-
 		if RecoverChargeNotify != nil{
-			RecoverChargeNotify(user,pool,dbv.TokenAmount,lastAmount,firstTime,dbv.BlockTime)
+			//RecoverChargeNotify(user,pool,dbv.TokenAmount,lastAmount,firstTime,dbv.BlockTime)
+			recoverNotify(user,pool,dbv.TokenAmount,dbv.BlockTime)
 		}
 
 		muc := v[user]
@@ -356,9 +352,95 @@ func recoverUserCharge() error {
 
 	}
 
+	recoverNotifyCommit()
+
 	return nil
 
 }
+
+type NotifyItem struct {
+	TokenAmount *big.Int
+	BlockTime int64
+}
+
+type ChargeNotify struct {
+	User common.Address
+	Pool common.Address
+	Items []*NotifyItem
+}
+
+var globalChargeNotifyMem *ChargeNotify
+
+func insert(items []*NotifyItem,item *NotifyItem) []*NotifyItem {
+
+	idx:=-1
+
+	var outs []*NotifyItem
+
+	for i:=0;i<len(items);i++{
+		if item.BlockTime < items[i].BlockTime{
+			idx = i
+			break
+		}
+	}
+
+	if idx == -1 || idx == 0{
+		outs = append(outs,item)
+		outs = append(outs,items...)
+	}else{
+		outs = append(outs,items[:idx]...)
+		outs = append(outs,item)
+		outs = append(outs,items[idx:]...)
+	}
+
+	return outs
+}
+
+func recoverNotifyCommit()  {
+	var items []*NotifyItem
+	if len(globalChargeNotifyMem.Items)>1{
+		for i:=0;i<len(globalChargeNotifyMem.Items);i++{
+			item:=globalChargeNotifyMem.Items[i]
+			items = insert(items,item)
+		}
+	}else{
+		items = globalChargeNotifyMem.Items
+	}
+
+	lastAmount := &big.Int{}
+	firstTime := true
+
+	for i:=0;i<len(items);i++{
+		m:=items[i]
+		RecoverChargeNotify(globalChargeNotifyMem.User,globalChargeNotifyMem.Pool,m.TokenAmount,lastAmount,firstTime,m.BlockTime)
+		lastAmount = m.TokenAmount
+		firstTime = false
+	}
+
+}
+
+func recoverNotify(user,pool common.Address, amount *big.Int, blkTime int64)  {
+
+	if globalChargeNotifyMem == nil || user != globalChargeNotifyMem.User{
+		if globalChargeNotifyMem != nil{
+			recoverNotifyCommit()
+		}
+
+		globalChargeNotifyMem = &ChargeNotify{
+			User: user,
+			Pool: pool,
+		}
+	}
+
+	item:=&NotifyItem{
+		TokenAmount: amount,
+		BlockTime: blkTime,
+	}
+
+	globalChargeNotifyMem.Items = append(globalChargeNotifyMem.Items,item)
+
+}
+
 
 var logUserChargeSrvItem *LogServiceItem
 
