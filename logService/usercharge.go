@@ -378,15 +378,17 @@ func insert(items []*NotifyItem,item *NotifyItem) []*NotifyItem {
 	var outs []*NotifyItem
 
 	for i:=0;i<len(items);i++{
-		if item.BlockTime < items[i].BlockTime{
+		if item.BlockTime > items[i].BlockTime{
+			continue
+		}else{
 			idx = i
 			break
 		}
 	}
 
-	if idx == -1 || idx == 0{
-		outs = append(outs,item)
+	if idx == -1 {
 		outs = append(outs,items...)
+		outs = append(outs,item)
 	}else{
 		outs = append(outs,items[:idx]...)
 		outs = append(outs,item)
