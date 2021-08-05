@@ -1,11 +1,11 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/hyperorchidlab/pirate_contract/contract"
-	"context"
 	"math/big"
 	"path"
 	"strings"
@@ -27,9 +27,9 @@ type PlatEthConfig struct {
 var SysEthConfig = &PlatEthConfig{
 	EthConfig: EthConfig{
 		NetworkID: 3,
-		EthApiUrl: "https://ropsten.infura.io/v3/df97d0caa3514b3d99e94bc7764cffa0",
-		Token:     common.HexToAddress("0xfdeaf9536c2374c3b7a1a7a427a83aea1811462c"),
-		Market:    common.HexToAddress("0x09381f7a2aff9b1fcbc0689a4e6607653651920a"),
+		EthApiUrl: "https://rinkeby.infura.io/v3/df97d0caa3514b3d99e94bc7764cffa0",
+		Token:     common.HexToAddress("0x72F391A5fC31b026739C8C26e0c5C01b2783F786"),
+		Market:    common.HexToAddress("0xb7b93d75690C4d1E8110D8D86b09Ff43BcA4335a"),
 	},
 }
 
@@ -170,10 +170,9 @@ func (tc *TokenClient) Close() {
 
 }
 
-func (tc *TokenClient)GetChainId() (*big.Int,error)  {
+func (tc *TokenClient) GetChainId() (*big.Int, error) {
 	return tc.client.ChainID(context.TODO())
 }
-
 
 func test(user common.Address) {
 	mc, _ := SysEthConfig.NewClient()
