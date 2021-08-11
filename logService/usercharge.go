@@ -19,7 +19,7 @@ import (
 
 type UserChargeHistory struct {
 	BlockPos
-	BlockTime 	  int64		`json:"block_time,omitempty"`
+	BlockTime     int64    `json:"block_time,omitempty"`
 	TokenAmount   *big.Int `json:"token_amount"`
 	TrafficAmount *big.Int `json:"traffic_amount"`
 }
@@ -63,14 +63,14 @@ func GetUserChargeCount() int {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 
-	cnt:=0
+	cnt := 0
 
-	u:=make(map[common.Address]struct{})
+	u := make(map[common.Address]struct{})
 
-	for _,pooluser:=range usersInPool.users{
-		for k,_:=range pooluser{
-			if _,ok:=u[k];!ok{
-				cnt ++
+	for _, pooluser := range usersInPool.users {
+		for k, _ := range pooluser {
+			if _, ok := u[k]; !ok {
+				cnt++
 				u[k] = struct{}{}
 			}
 		}
@@ -113,9 +113,9 @@ func GetUserData(pool, user common.Address) *cabinet.PirateEthUserData {
 
 }
 
-var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int, lastAmount *big.Int,firstTime bool,chargeTime int64) error
+var UserChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int, lastAmount *big.Int, firstTime bool, chargeTime int64) error
 
-var RecoverChargeNotify func(user common.Address,pool common.Address,tokenAmount *big.Int, lastAmout *big.Int, firstTime bool,chargeTime int64) error
+var RecoverChargeNotify func(user common.Address, pool common.Address, tokenAmount *big.Int, lastAmout *big.Int, firstTime bool, chargeTime int64) error
 
 var userChargeKeyHead = "user_charge_"
 var userChargeKey = userChargeKeyHead + "%s_%s_%d_%d"
@@ -139,7 +139,7 @@ func userChargeKey2Address(key []byte) (pool, user common.Address, err error) {
 	return
 }
 
-func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int,nowtime int64) (bool,bool,*big.Int) {
+func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int, nowtime int64) (bool, bool, *big.Int) {
 	usersInPool.lock.Lock()
 	defer usersInPool.lock.Unlock()
 
@@ -158,12 +158,12 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 
 	for _, history := range v[user].History {
 		if history.BlockNumber == l.BlockNumber && history.TxIndex == l.TxIndex {
-			return false,false,lastAmount
+			return false, false, lastAmount
 		}
 	}
 	lastAmount = v[user].TokenAmount
 
-	if len(v[user].History) == 0{
+	if len(v[user].History) == 0 {
 		firstTime = true
 	}
 
@@ -175,7 +175,7 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 	fmt.Println("UserCharge: ", pool.String(), user.String(), v[user].TokenAmount, v[user].TrafficAmount)
 
 	uc := v[user]
-	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount,BlockTime: nowtime}
+	h := &UserChargeHistory{BlockPos: BlockPos{BlockNumber: l.BlockNumber, TxIndex: l.TxIndex}, TokenAmount: tokenAmount, BlockTime: nowtime}
 
 	uc.History = append(uc.History, h)
 
@@ -186,34 +186,34 @@ func _addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmoun
 
 	GetLogConf().Save([]byte(key), dbv)
 
-	return true,firstTime,lastAmount
+	return true, firstTime, lastAmount
 }
 
-func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int,nowTime int64) {
+func addNewUserChargeHistory(pool, user common.Address, l types.Log, tokenAmount *big.Int, trafficAmount *big.Int, nowTime int64) {
 
-	n,firstTimne,lastAmount := _addNewUserChargeHistory(pool, user, l, tokenAmount, trafficAmount,nowTime)
+	n, firstTimne, lastAmount := _addNewUserChargeHistory(pool, user, l, tokenAmount, trafficAmount, nowTime)
 
 	if n && UserChargeNotify != nil {
 		fmt.Println("UserCharge Notify:", pool.String(), user.String(), tokenAmount.String(), trafficAmount.String())
-		UserChargeNotify(user, pool, tokenAmount, lastAmount,firstTimne,nowTime)
+		UserChargeNotify(user, pool, tokenAmount, lastAmount, firstTimne, nowTime)
 	}
 }
 
-func getBlockTime(c *ethclient.Client,hash common.Hash) int64  {
-	if blk,err:= c.BlockByHash(context.TODO(),hash);err!=nil{
+func getBlockTime(c *ethclient.Client, hash common.Hash) int64 {
+	if blk, err := c.BlockByHash(context.TODO(), hash); err != nil {
 		return 0
-	}else{
+	} else {
 		return int64(blk.Time())
 	}
 }
 
-func getBlockTime2(c *ethclient.Client, num uint64) int64  {
+func getBlockTime2(c *ethclient.Client, num uint64) int64 {
 	bignum := &big.Int{}
 	bignum.SetUint64(num)
 
-	if blk,err:=c.BlockByNumber(context.TODO(),bignum);err!=nil{
+	if blk, err := c.BlockByNumber(context.TODO(), bignum); err != nil {
 		return 0
-	}else{
+	} else {
 		return int64(blk.Time())
 	}
 }
@@ -247,8 +247,8 @@ func batchUserCharge() error {
 
 	for iter.Next() {
 		ev := iter.Event
-		nowtime:=getBlockTime(mc.GetClient(),iter.Event.Raw.BlockHash)
-		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount, ev.TrafficAmount,nowtime)
+		nowtime := getBlockTime(mc.GetClient(), iter.Event.Raw.BlockHash)
+		addNewUserChargeHistory(ev.Pool, ev.User, ev.Raw, ev.TokenAmount, ev.TrafficAmount, nowtime)
 		userChargeEvent.LastMax(ev.Raw)
 	}
 
@@ -286,8 +286,8 @@ func watchUserCharge(batch *chan *LogServiceItem) error {
 
 func recoverUserCharge() error {
 	alluc := GetLogConf().BatchGet([]byte(userChargeKeyHead), []byte(userChargeKeyPatternEnd))
-	c,err:=GetLogConf().cfg.NewEthClient()
-	if err!=nil{
+	c, err := GetLogConf().cfg.NewEthClient()
+	if err != nil {
 		return err
 	}
 	defer c.Close()
@@ -316,11 +316,11 @@ func recoverUserCharge() error {
 		dbv := &UserChargeHistory{}
 		json.Unmarshal(uc.vaule, dbv)
 
-		if dbv.BlockTime == 0{
-			dbv.BlockTime = getBlockTime2(c,dbv.BlockNumber)
-			if dbv.BlockTime > 0{
-				data,_:=json.Marshal(dbv)
-				GetLogConf().Save(uc.key,data)
+		if dbv.BlockTime == 0 {
+			dbv.BlockTime = getBlockTime2(c, dbv.BlockNumber)
+			if dbv.BlockTime > 0 {
+				data, _ := json.Marshal(dbv)
+				GetLogConf().Save(uc.key, data)
 			}
 		}
 
@@ -336,9 +336,9 @@ func recoverUserCharge() error {
 			continue
 		}
 
-		if RecoverChargeNotify != nil{
+		if RecoverChargeNotify != nil {
 			//RecoverChargeNotify(user,pool,dbv.TokenAmount,lastAmount,firstTime,dbv.BlockTime)
-			recoverNotify(user,pool,dbv.TokenAmount,dbv.BlockTime)
+			recoverNotify(user, pool, dbv.TokenAmount, dbv.BlockTime)
 		}
 
 		muc := v[user]
@@ -352,7 +352,9 @@ func recoverUserCharge() error {
 
 	}
 
-	recoverNotifyCommit()
+	if globalChargeNotifyMem != nil {
+		recoverNotifyCommit()
+	}
 
 	return nil
 
@@ -360,71 +362,71 @@ func recoverUserCharge() error {
 
 type NotifyItem struct {
 	TokenAmount *big.Int
-	BlockTime int64
+	BlockTime   int64
 }
 
 type ChargeNotify struct {
-	User common.Address
-	Pool common.Address
+	User  common.Address
+	Pool  common.Address
 	Items []*NotifyItem
 }
 
 var globalChargeNotifyMem *ChargeNotify
 
-func insert(items []*NotifyItem,item *NotifyItem) []*NotifyItem {
+func insert(items []*NotifyItem, item *NotifyItem) []*NotifyItem {
 
-	idx:=-1
+	idx := -1
 
 	var outs []*NotifyItem
 
-	for i:=0;i<len(items);i++{
-		if item.BlockTime > items[i].BlockTime{
+	for i := 0; i < len(items); i++ {
+		if item.BlockTime > items[i].BlockTime {
 			continue
-		}else{
+		} else {
 			idx = i
 			break
 		}
 	}
 
 	if idx == -1 {
-		outs = append(outs,items...)
-		outs = append(outs,item)
-	}else{
-		outs = append(outs,items[:idx]...)
-		outs = append(outs,item)
-		outs = append(outs,items[idx:]...)
+		outs = append(outs, items...)
+		outs = append(outs, item)
+	} else {
+		outs = append(outs, items[:idx]...)
+		outs = append(outs, item)
+		outs = append(outs, items[idx:]...)
 	}
 
 	return outs
 }
 
-func recoverNotifyCommit()  {
+func recoverNotifyCommit() {
 	var items []*NotifyItem
-	if len(globalChargeNotifyMem.Items)>1{
-		for i:=0;i<len(globalChargeNotifyMem.Items);i++{
-			item:=globalChargeNotifyMem.Items[i]
-			items = insert(items,item)
+	if len(globalChargeNotifyMem.Items) > 1 {
+		for i := 0; i < len(globalChargeNotifyMem.Items); i++ {
+			item := globalChargeNotifyMem.Items[i]
+			items = insert(items, item)
 		}
-	}else{
+	} else {
 		items = globalChargeNotifyMem.Items
 	}
 
 	lastAmount := &big.Int{}
 	firstTime := true
 
-	for i:=0;i<len(items);i++{
-		m:=items[i]
-		RecoverChargeNotify(globalChargeNotifyMem.User,globalChargeNotifyMem.Pool,m.TokenAmount,lastAmount,firstTime,m.BlockTime)
+	for i := 0; i < len(items); i++ {
+		m := items[i]
+		RecoverChargeNotify(globalChargeNotifyMem.User, globalChargeNotifyMem.Pool, m.TokenAmount, lastAmount, firstTime, m.BlockTime)
 		lastAmount = m.TokenAmount
 		firstTime = false
 	}
 
 }
 
-func recoverNotify(user,pool common.Address, amount *big.Int, blkTime int64)  {
+func recoverNotify(user, pool common.Address, amount *big.Int, blkTime int64) {
 
-	if globalChargeNotifyMem == nil || user != globalChargeNotifyMem.User{
-		if globalChargeNotifyMem != nil{
+	if globalChargeNotifyMem == nil || user != globalChargeNotifyMem.User {
+		if globalChargeNotifyMem != nil {
 			recoverNotifyCommit()
 		}
 
@@ -434,15 +436,14 @@ func recoverNotify(user,pool common.Address, amount *big.Int, blkTime int64)  {
 		}
 	}
 
-	item:=&NotifyItem{
+	item := &NotifyItem{
 		TokenAmount: amount,
-		BlockTime: blkTime,
+		BlockTime:   blkTime,
 	}
 
-	globalChargeNotifyMem.Items = append(globalChargeNotifyMem.Items,item)
+	globalChargeNotifyMem.Items = append(globalChargeNotifyMem.Items, item)
 
 }
-
 
 var logUserChargeSrvItem *LogServiceItem
 
