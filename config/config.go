@@ -27,7 +27,7 @@ type PlatEthConfig struct {
 var SysEthConfig = &PlatEthConfig{
 	EthConfig: EthConfig{
 		NetworkID: 3,
-		EthApiUrl: "https://rinkeby.infura.io/v3/df97d0caa3514b3d99e94bc7764cffa0",
+		EthApiUrl: "https://rinkeby.infura.io/v3/5ccfb3c5e4dc4117b91d08ceb1b22b67",
 		Token:     common.HexToAddress("0x72F391A5fC31b026739C8C26e0c5C01b2783F786"),
 		Market:    common.HexToAddress("0xb7b93d75690C4d1E8110D8D86b09Ff43BcA4335a"),
 	},
