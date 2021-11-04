@@ -8,6 +8,8 @@ all:
 	#abigen --abi ExtendToken.abi --pkg contract --type ExtendToken --out ExtendToken.go
 	abigen --abi ApplyToken.abi --pkg contract --type ApplyToken --out ApplyToken.go
 	abigen --abi HopShop.abi --pkg contract --type HopShop --out HopShop.go
+go:
+	abigen --abi HopSellInvestor.abi --pkg contract --type HopSellInvestor --out HopSellInvestor.go
 
 abi:
 	solc --abi --overwrite TrafficMarket.sol -o ./
@@ -16,6 +18,8 @@ abi:
 	#solc --abi --overwrite ExtendToken.sol -o ./
 	solc --abi --overwrite ApplyToken.sol -o ./
 	solc --abi --overwrite HopShop.sol -o ./
+abi1:
+	solc --abi --overwrite ./hop_sell/inverstor.sol -o ./
 
 clean:
 #	rm -f *.abi
