@@ -23,6 +23,8 @@ type PlatEthConfig struct {
 	DirectNetFunc func() `json:"-"`
 }
 
+//var PoolDepositContractOnRinkeby = "0x1EA98a0DCFe63D5e9CeB42C9F6c2E17998F23D8d"
+
 //change this to use mainnet
 var SysEthConfig = &PlatEthConfig{
 	EthConfig: EthConfig{
