@@ -5,39 +5,13 @@ pragma solidity >=0.7.0 <0.9.0;
 import "./owned.sol";
 import "./IERC20.sol";
 
-library ArrayOP{
-
-    function indexOf(uint256[] storage self, uint256 value) public  view returns (uint, bool) {
-        for (uint i = 0; i < self.length; i++){
-            if (self[i] == value){
-                return (i, true);
-            }
-        }
-
-        return (0, false);
-    }
-
-    function removeValue(uint256[] storage self, uint256 value) public returns(uint, bool){
-
-        for (uint idx = 0; idx < self.length; idx++){
-            if (self[idx] == value){
-                self[idx]=0;
-                return (idx, true);
-            }
-        }
-
-        return (0, false);
-    }
-}
-
-contract PoolDeposit is owned{
-    using ArrayOP for uint256[];
+contract ContentNetworkDeposit is owned{
 
     struct Bill{
         address user;
         address pool;
         uint256 tokenNo;
-        uint256 startDay;
+        uint256 dueDay;
     }
 
     constructor(address t){
@@ -48,11 +22,10 @@ contract PoolDeposit is owned{
     *           system parameters
     *************************************************/
     uint256 public CurrentBID = 1000000;
-    bool public isOpen = false;
+    bool public isOpen = true;
     uint256 public userRewardFor100Hops = 14;
     uint256 public poolRewardFor100Hops = 1;
-    uint256 public billLifeInDays = 180;//
-    uint256 public billLife = billLifeInDays * 1 days;
+    uint256 public billLifeInDays = 90;
     uint256 public constant TokenDecimal = 10 ** 18;
 
 
@@ -77,12 +50,23 @@ contract PoolDeposit is owned{
     *************************************************/
     modifier usableBill(uint256 bid) {
         Bill memory bill = billDetails[bid];
-        require(bill.startDay != 0 && bill.tokenNo > 0, "invalid bill");
+        require(bill.dueDay != 0 && bill.tokenNo > 0, "invalid bill");
         require(bill.pool != address(0) && bill.user == msg.sender, "no right");
-        require(block.timestamp > bill.startDay + billLife, "not be due");
+        require(block.timestamp > bill.dueDay, "not be due");
         _;
     }
+    modifier serviceOpen(){
+        require(isOpen, "service closed now");
+        _;
+    }
+    function removeValue(uint256[] storage self, uint256 value) private{
 
+        for (uint idx = 0; idx < self.length; idx++){
+            if (self[idx] == value){
+                self[idx]=0;
+            }
+        }
+    }
 
     /*************************************************
     *           owner operation
@@ -104,7 +88,7 @@ contract PoolDeposit is owned{
     /*************************************************
     *           normal operation
     *************************************************/
-    function depositForPool(address poolAddress, uint256 tokenNo) public{
+    function depositForPool(address poolAddress, uint256 tokenNo) public serviceOpen{
         require(address(0) != poolAddress, "invalid pool address");
         require(tokenNo != 0, "invalid token no");
 
@@ -112,7 +96,7 @@ contract PoolDeposit is owned{
         token.transferFrom(msg.sender, address(this), noInDecimal);
 
         CurrentBID++;
-        billDetails[CurrentBID] = Bill(msg.sender, poolAddress, noInDecimal, block.timestamp);
+        billDetails[CurrentBID] = Bill(msg.sender, poolAddress, noInDecimal, block.timestamp + billLifeInDays * 1 days);
 
         userBillIDList[msg.sender].push(CurrentBID);
 
@@ -122,12 +106,12 @@ contract PoolDeposit is owned{
     }
 
 
-    function withDrawFromPool(uint256 bid)  public usableBill(bid){
+    function withDrawFromPool(uint256 bid)  public serviceOpen usableBill(bid){
+
         Bill memory bill = billDetails[bid];
 
-        userBillIDList[bill.user].removeValue(bid);
-
-        poolsBillIDList[bill.pool].removeValue(bid);
+        removeValue(userBillIDList[bill.user], bid);
+        removeValue(poolsBillIDList[bill.pool], bid);
 
         delete billDetails[bid];
         uint256 rewards = bill.tokenNo / 100 * userRewardFor100Hops;
@@ -138,7 +122,7 @@ contract PoolDeposit is owned{
         emit UserWithDraw(bill.pool, msg.sender, bill.tokenNo, rewards);
     }
 
-    function poolIncomeWithDraw() public {
+    function poolIncomeWithDraw() public serviceOpen{
         uint256 tokenNo = poolsFeeIncome[msg.sender];
         require(tokenNo > 0, "no founds");
 
@@ -162,5 +146,13 @@ contract PoolDeposit is owned{
 
     function hopBalanceOf(address addr)view public returns(uint256){
         return token.balanceOf(addr);
+    }
+
+    function billListOfUser(address usr) view public returns (uint256[] memory){
+        return userBillIDList[usr];
+    }
+
+    function billListOfPool(address pool) view public returns (uint256[] memory){
+        return poolsBillIDList[pool];
     }
 }
