@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0
+
 pragma solidity >=0.4.24;
 
 import "./owned.sol";
@@ -21,7 +23,7 @@ contract HopShop is owned{
     uint256 public hasRaised = 0;
     IERC20 public _token;
 
-    constructor(address payable wallet, IERC20 token) public{
+    constructor(address payable wallet, IERC20 token){
         require(wallet != address(0));
         require(address(token) != address(0));
         _adminWallet = wallet;
@@ -29,7 +31,7 @@ contract HopShop is owned{
         TokenNoToSellInLevel1 = 2.1e7 * (10 ** 18);
     }
 
-    function () payable external{
+    fallback() payable external{
         require(msg.value > 0);
 
         uint256 tokenNo = 0;

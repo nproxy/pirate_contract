@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0
+
 pragma solidity >=0.5.11;
 
 import "./owned.sol";
@@ -10,7 +12,7 @@ contract ApplyToken is owned{
     IERC20 public token;
     address public payer;
 
-    constructor(address t, address p) public{
+    constructor(address t, address p){
         token = IERC20(t);
         payer = p;
     }
@@ -29,5 +31,11 @@ contract ApplyToken is owned{
         payer = newPayer;
     }
 
-    function() payable external {}
+    fallback() external payable {
+        // custom function code
+    }
+
+    receive() external payable {
+        // custom function code
+    }
 }

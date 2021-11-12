@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.5.11;
 
 import "./owned.sol";
@@ -57,7 +58,7 @@ contract TrafficMarket is owned {
         _;
     }
 
-    constructor(address tokenAddr) public {
+    constructor(address tokenAddr) {
         token = IERC20(tokenAddr);
     }
 

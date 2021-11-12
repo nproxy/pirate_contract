@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.5.11;
 
 import "./owned.sol";
@@ -23,7 +24,7 @@ contract PirateDeposit is owned{
         _;
     }
 
-    constructor (address t, address m) public{
+    constructor (address t, address m){
         token = IERC20(t);
         market = TrafficMarket(m);
         coordinator =  msg.sender;
@@ -86,7 +87,7 @@ contract PirateDeposit is owned{
 
         token.transferFrom(msg.sender, address(this), tokenNumber);
 
-        uint256 NowTime = now;
+        uint256 NowTime = block.timestamp;
 
         DepositDatas[pool][msg.sender].uds.push(userDeposit(tokenNumber,NowTime));
 
@@ -154,7 +155,7 @@ contract PirateDeposit is owned{
 
     function poolDrawReward(uint256 poolIndex) public{
         require(market.LegalPool(msg.sender,poolIndex),"pool not found");
-        require(now > (DrawRates[msg.sender][DrawRates[msg.sender].length-1].drawRateTime + poolDrawInterval), "pool draw profit error");
+        require(block.timestamp > (DrawRates[msg.sender][DrawRates[msg.sender].length-1].drawRateTime + poolDrawInterval), "pool draw profit error");
 
         uint256 sumDs = 0;
         for(uint256 i=0;i<DrawRates[msg.sender].length;i++){

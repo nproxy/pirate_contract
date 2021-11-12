@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.4.24;
 
 import "./ERC20.sol";
@@ -9,7 +10,7 @@ contract HyperOrchidProtocol is ERC20{
     uint8   public constant  decimals = 18;
     uint256 public constant INITIAL_SUPPLY = 4.2e8 * (10 ** uint256(decimals));
 
-    constructor() public{
+    constructor(){
         _mint(msg.sender, INITIAL_SUPPLY);
     }
 }
