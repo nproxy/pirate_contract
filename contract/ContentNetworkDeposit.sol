@@ -11,6 +11,7 @@ contract ContentNetworkDeposit is owned{
         address user;
         address pool;
         uint256 tokenNo;
+        uint256 createDay;
         uint256 dueDay;
     }
 
@@ -96,7 +97,11 @@ contract ContentNetworkDeposit is owned{
         token.transferFrom(msg.sender, address(this), noInDecimal);
 
         CurrentBID++;
-        billDetails[CurrentBID] = Bill(msg.sender, poolAddress, noInDecimal, block.timestamp + billLifeInDays * 1 days);
+        billDetails[CurrentBID] = Bill(msg.sender,
+            poolAddress,
+            noInDecimal,
+            block.timestamp,
+            block.timestamp + billLifeInDays * 1 days);
 
         userBillIDList[msg.sender].push(CurrentBID);
 
