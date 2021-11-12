@@ -19,6 +19,11 @@ contract ContentNetworkDeposit is owned{
         token = IERC20(t);
     }
 
+    /*
+    *token address on test network: 0x72F391A5fC31b026739C8C26e0c5C01b2783F786
+    *token address on main network: 0x1999ac2b141E6d5c4e27579b30f842078bc620b3
+    */
+
     /*************************************************
     *           system parameters
     *************************************************/
